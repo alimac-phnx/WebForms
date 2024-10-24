@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebForms.ViewModels.FormTableViewModel>
+
+<h2 class="mt-4">Forms</h2>
+
+<div class="table">
+    <table class="table table-hover">
+        <thead class="table">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Answers</th>
+                <th>Date of assigning</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var form in Model)
+            {
+                <tr>
+                    <td>@form.Name</td>
+                    <td>@form.Description</td>
+                    <td>@form.AnswerCount</td>
+                    <td>@form.AssignedAt</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Form", new { id = form.Id })" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="@Url.Action("Details", "Form", new { id = form.Id })" class="btn btn-info btn-sm">Details</a>
+                        <form asp-action="Delete" asp-route-id="@form.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

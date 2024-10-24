@@ -1,0 +1,52 @@
+﻿@model WebForms.ViewModels.FormEditViewModel
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            @if (!string.IsNullOrEmpty(Model.Template.ImageUrl))
+            {
+                <div class="text-center mb-4">
+                    <img src="@Model.Template.ImageUrl" alt="@Model.Template.Name" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;" />
+                </div>
+            }
+
+            <h2 class="text-center mb-3">@Model.Template.Name</h2>
+            <p class="text-muted text-center mb-5">@Model.Template.Description</p><p class="text-muted text-center mb-5">
+                <strong>Topic:</strong> @Model.TopicName<br />
+                <strong>Questions:</strong> @Model.QuestionsCount<br />
+                <strong>Author:</strong> @Model.AuthorName<br />
+            </p>
+
+            <div class="text-center">
+                @foreach (var tag in Model.Template.Tags)
+                {
+                    <div class="tag-item d-inline-block mr-2 mb-2 p-2 border rounded" style="background-color: #e9ecef;">
+                        <span>@tag.Name</span>
+                    </div>
+                }
+            </div>
+
+            @for (int i = 0; i < Model.Template.Questions.Count; i++)
+            {
+                var question = Model.Template.Questions[i];
+                if (question.IsVisible)
+                {
+                    <div class="mb-3">
+                        <label for="question-@question.Id" class="form-label">@question.Text </label>
+                        @if (question.Type == "Checkbox")
+                        {
+                            <input type="checkbox" class="form-check-input"
+                                   asp-for="Answers[@i].Value" disabled />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control"
+                                   asp-for="Answers[@i].Value"
+                                   placeholder="@WebForms.ViewModels.FormCreateViewModel.Placeholders[question.Type]" readonly />
+                        }
+                        
+                    </div>
+                }
+            }
+        </div>
+    </div>

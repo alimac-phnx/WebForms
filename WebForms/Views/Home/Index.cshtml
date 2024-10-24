@@ -1,0 +1,67 @@
+﻿@model List<WebForms.ViewModels.TemplateDisplayViewModel>
+
+<h2 class="my-4" style="text-align:center">Search</h2>
+
+<form asp-action="Search" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="query" class="form-control" placeholder="Enter your search query" />
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+</form>
+
+<h2 class="my-4 head-text">Popular Templates</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            var template = item.Template;
+            <div class="template-card col-md-6 mb-4">
+                <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" style="text-decoration: none; color: inherit;">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">@template.Name</h5>
+                                    <p class="card-text">@template.Description</p>
+
+                                    <p class="text-muted">
+                                        <strong>Topic:</strong> @item.TopicName<br />
+                                        <strong>Questions:</strong> @item.QuestionsCount<br />
+                                        <strong>Author:</strong> @item.AuthorName<br />
+                                        <strong>Created:</strong> @template.CreatedAt.ToString("yyyy-MM-dd")<br />
+                                    </p>
+                                    @* Отображение тегов *@
+                                    <div class="template-tags">
+                                        @foreach (var tag in template.Tags)
+                                        {
+                                            <span class="tag">@tag.Name</span>
+                                        }
+                                    </div>
+
+                                    <a href="@Url.Action("Create", "Form", new { id = template.Id })" class="btn btn-primary">Fill a form</a>
+                                </div>
+
+                            </div>
+                            @* Проверка наличия изображения *@
+                            @if (!string.IsNullOrEmpty(template.ImageUrl))
+                            {
+                                <div class="col-md-4" style="padding-right: 10px;">
+                                    <img src="@template.ImageUrl" loading="lazy" class="img-fluid" alt="@template.Name" style="max-height: 100%; object-fit: contain;" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            
+        }
+    </div>
+}
+else
+{
+    <p>No available templates</p>
+}

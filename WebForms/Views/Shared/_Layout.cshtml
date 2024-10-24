@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebForms</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebForms.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Ссылка на главную страницу (Home/Index) -->
+                <a class="navbar-brand" href="#">WebForms</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Home</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        @{
+                            string currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+                            string currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item dropdown">
+                                    <!-- Приветствие пользователя -->
+                                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Hello, @User.Identity.Name!
+                                    </a>
+                                    <!-- Выпадающий список с действиями -->
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("UserTemplates", "Template")">My templates</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("UserForms", "Form")">My forms</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("Create", "Template")">Create new template</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li>
+                                            <form method="post" action="@Url.Action("Logout", "Account")" class="form-inline">
+                                                <button type="submit" class="dropdown-item">
+                                                    Log out <i class="fas fa-sign-out-alt"></i>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Login", "Account")">Log in</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Register", "Account")">Register</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted" style="position: static">
+        <div class="container">
+            &copy; 2024 - WebForms - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

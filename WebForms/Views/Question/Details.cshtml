@@ -1,0 +1,13 @@
+﻿@model WebForms.Models.Question
+
+<h2>Details of the question</h2>
+
+<div>
+    <h4>Text:</h4>
+    <p>@Model.Text</p>
+
+    <h4>Type:</h4>
+    <p>@Model.Type</p>
+</div>
+
+<a href="@Url.Action("Index", new { templateId = Model.TemplateId })" class="btn btn-secondary">Back</a>

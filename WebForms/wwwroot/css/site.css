@@ -1,0 +1,77 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.card-body {
+    flex-grow: 1;
+}
+
+.head-text {
+    margin-top: 100px !important;
+}
+
+.card-text {
+    height: 70px; /* Ограничиваем высоту */
+    overflow: hidden; /* Скрываем лишний текст */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+    display: -webkit-box; /* Для поддержки многоточия в Safari */
+    -webkit-box-orient: vertical; /* Вертикальная ориентация */
+    -webkit-line-clamp: 3; /* Ограничиваем количество строк */
+}
+
+.table td {
+    max-width: 200px; /* Максимальная ширина ячейки */
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden; /* Скрываем текст, выходящий за пределы */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+}
+
+.template-tags {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    min-height: 40px;  /* Для обрезки по строкам */
+    max-width: 100%;       /* Ограничение ширины блока */
+    white-space: nowrap;    /* Не переносить текст на новую строку */
+    overflow: hidden;       /* Скрыть переполнение */
+    text-overflow: ellipsis;
+}
+
+.template-tags .tag {
+    display: inline-block;
+    background-color: #f0f0f0; /* Цвет фона для тегов */
+    color: #333; /* Цвет текста */
+    border-radius: 20px; /* Закругленные углы */
+    padding: 5px 10px; /* Отступы внутри "кирпичиков" */
+    margin-right: 5px; /* Отступ между тегами */
+    margin-bottom: 5px; /* Отступ снизу (если много тегов) */
+    font-size: 12px; /* Размер текста */
+}
+
+.img-fluid {
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.footer {
+    margin-top: 50px;
+    position: static;
+}

@@ -1,0 +1,290 @@
+﻿@model WebForms.ViewModels.TemplateEditViewModel
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<h2>Template editing</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="TemplateId" />
+
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="3" required></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TopicId">Select Topic</label>
+        <select asp-for="TopicId" class="form-control">
+            @foreach (var topic in Model.AvailableTopics)
+            {
+                <option value="@topic.Id" selected="@(topic.Id == Model.TopicId ? "selected" : null)">@topic.Name</option>
+            }
+        </select>
+        <span asp-validation-for="TopicId" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" name="RemoveImage" id="remove-image-hidden" value="false" />
+    
+    <label>Image</label>
+    <div class="form-group">
+        <div class="position-relative d-inline-block">
+            <img asp-for="ImageUrl" id="current-image" src="@Model.ImageUrl" class="img-thumbnail mb-2" alt="No image" style="max-width: 200px;" />
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <button type="button" class="btn btn-danger btn-sm position-absolute" id="remove-image-btn" style="top: 5px; right: 5px;" onclick="removeImage()">×</button>
+            }
+        </div>
+        <input type="file" asp-for="NewImageFile" class="form-control" accept="image/*" onchange="previewImage(this)" />
+        <span asp-validation-for="NewImageFile" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label for="Tags">Tags</label>
+        <input type="text" class="form-control" id="Tags" name="Tags" autocomplete="off" placeholder="Enter tag..." oninput="showAutocomplete(this.value)" />
+        <div id="autocomplete-list" class="autocomplete-items"></div>
+    </div>
+
+    <div id="selected-tags" class="mt-2"></div>
+
+    <input type="hidden" name="NewTags" id="new-tags-hidden" />
+
+    <div id="questions-container" class="mb-4" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h4>Questions</h4>
+    </div>
+
+    <div id="questions-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-@i">
+                <h5>Question @(i + 1)</h5>
+                <div class="form-group">
+                    <label for="Questions[@i].Text">Text</label>
+                    <input type="text" name="Questions[@i].Text" value="@Model.Questions[i].Text" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="questions[@i].Type">Type</label>
+                    <select name="questions[@i].Type" class="form-control">
+                        <option value="SingleLine" selected="@(Model.Questions[i].Type == "SingleLine" ? "selected" : null)" )>Single-line answer</option>
+                        <option value="MultipleLine" selected="@(Model.Questions[i].Type == "MultipleLine" ? "selected" : null)" )>Text answer</option>
+                        <option value="Integer" selected="@(Model.Questions[i].Type == "Integer" ? "selected" : null)" )>Integer-value answer</option>
+                        <option value="Checkbox" selected="@(Model.Questions[i].Type == "Checkbox" ? "selected" : null)" )>Checkbox answer</option>
+                    </select>
+                </div>
+                <div class="form-group form-check">
+                    @if (Model.Questions[i].IsVisible)
+                    {
+                        <input type="checkbox" class="form-check-input" name="Questions[@i].IsVisible" id="Questions[@i].IsVisible" value="true" checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="form-check-input" name="Questions[@i].IsVisible" id="Questions[@i].IsVisible" value="true" />
+                    }
+                    <label class="form-check-label" for="Questions[@i].IsVisible">Show in Form</label>
+                </div>
+
+                <button type="button" class="btn btn-danger mt-2" onclick="removeQuestion(@i)">Delete</button>
+            </div>
+        }
+    </div>
+
+    <div id="newquestions-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+    </div>
+
+    <button type="button" class="btn btn-secondary" onclick="addQuestion()">Add question</button>
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>
+
+<script>
+    function previewImage(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imgElement = document.getElementById('current-image');
+                imgElement.src = e.target.result; // Обновляем src у изображения
+            };
+
+            document.getElementById('remove-image-hidden').value = 'false';
+            reader.readAsDataURL(file); // Считываем файл и выводим как DataURL 
+        }
+    }
+
+    function removeImage() {
+        const imgElement = document.getElementById('current-image');
+        imgElement.src = ''; // Очищаем изображение
+        imgElement.alt = 'No image'; // Обновляем атрибут alt
+
+        // Скрываем кнопку удаления
+        const removeButton = document.getElementById('remove-image-btn');
+        removeButton.style.display = 'none';
+
+        document.getElementById('remove-image-hidden').value = 'true';
+    }
+
+
+    let questionIndex = @Model.Questions.Count;
+
+    function addQuestion() {
+        const container = document.getElementById('newquestions-container');
+        const questionHtml = `
+            <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-${questionIndex}">
+                <h5>Question ${questionIndex + 1}</h5>
+                <input type="hidden" name="Questions[${questionIndex}].Id" value="0" />
+                <input type="hidden" name="Questions[${questionIndex}].TemplateId" value="@Model.TemplateId" />
+
+                <label for="Questions[${questionIndex}].Text">Text</label>
+                <input type="text" name="Questions[${questionIndex}].Text" class="form-control" required />
+
+                <label for="Questions[${questionIndex}].Type">Type</label>
+                <select name="Questions[${questionIndex}].Type" class="form-control">
+                    <option value="SingleLine">Single-line answer</option>
+                    <option value="MultipleLine">Text answer</option>
+                    <option value="Integer">Integer-value answer</option>
+                    <option value="Checkbox">Checkbox answer</option>
+                </select>
+
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" name="Questions[${questionIndex}].IsVisible" id="Questions[${questionIndex}].IsVisible" value="true" checked />
+                    <label class="form-check-label" for="Questions[${questionIndex}].IsVisible">Show in Form</label>
+                </div>
+
+                <button type="button" class="btn btn-danger mt-2" onclick="removeQuestion(${questionIndex})">Delete</button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', questionHtml);
+        questionIndex++;
+    }
+
+    function removeQuestion(index) {
+        const questionElement = document.getElementById(`question-${index}`);
+        if (questionElement) {
+            questionElement.remove();
+        }
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const data = ev.dataTransfer.getData("text");
+        const draggedElement = document.getElementById(data);
+        const target = ev.target.closest('.question-item');
+
+        if (target) {
+            target.parentNode.insertBefore(draggedElement, target);
+        } else {
+            document.getElementById('questions-container').appendChild(draggedElement);
+        }
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    let selectedTags = @Html.Raw(Json.Serialize(Model.CurrentTags)); // Инициализируем текущие теги из модели
+
+    // Показ автозаполнения тегов
+    function showAutocomplete(value) {
+        const tags = @Html.Raw(Json.Serialize(Model.AvailableTags)); // Получаем теги из модели
+        const autocompleteList = document.getElementById('autocomplete-list');
+        autocompleteList.innerHTML = ''; // Очищаем список автозаполнения
+
+        if (!value) return false;
+
+        let foundTag = false; // Флаг, чтобы проверить наличие тега
+
+        tags.forEach(tag => {
+            if (tag.toLowerCase().startsWith(value.toLowerCase()) && !selectedTags.includes(tag)) { // Если тег есть среди доступных
+                const item = document.createElement('div');
+                item.innerHTML = tag;
+                item.onclick = () => {
+                    addTag(tag); // Добавляем тег при клике
+                    document.getElementById('NewTags').value = '';
+                    autocompleteList.innerHTML = '';
+                };
+                autocompleteList.appendChild(item);
+                foundTag = true; // Тег найден
+            }
+        });
+
+        // Если тег не найден среди доступных, показываем кнопку "Add Tag"
+        if (!foundTag && value.trim().length > 0) {
+            const addItem = document.createElement('div');
+            addItem.innerHTML = `<button class="btn btn-primary btn-sm">Add tag "${value}"</button>`;
+            addItem.onclick = () => {
+                addTag(value); // Добавляем новый тег при клике
+                document.getElementById('NewTags').value = '';
+                autocompleteList.innerHTML = '';
+            };
+            autocompleteList.appendChild(addItem);
+        }
+    }
+
+    // Добавление тега
+    function addTag(tag) {
+        if (!selectedTags.includes(tag)) {
+            selectedTags.push(tag); // Добавляем тег в массив
+            updateTagDisplay(); // Обновляем отображение выбранных тегов
+        }
+    }
+
+    // Удаление тега
+    function removeTag(tag) {
+        selectedTags = selectedTags.filter(t => t !== tag); // Убираем тег из массива
+        updateTagDisplay(); // Обновляем отображение
+    }
+
+    // Обновление отображения выбранных тегов
+    function updateTagDisplay() {
+        const container = document.getElementById('selected-tags');
+        container.innerHTML = ''; // Очищаем предыдущие теги
+
+        selectedTags.forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.classList.add('tag-item', 'd-inline-block', 'mr-2', 'mb-2', 'p-2', 'border', 'rounded');
+            tagElement.style.backgroundColor = '#e9ecef';
+
+            const tagText = document.createElement('span');
+            tagText.textContent = tag;
+
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+            removeButton.textContent = 'x';
+            removeButton.onclick = () => {
+                removeTag(tag); // Удаляем тег при клике
+            };
+
+            tagElement.appendChild(tagText);
+            tagElement.appendChild(removeButton);
+            container.appendChild(tagElement);
+
+            // Создаем скрытое поле для каждого тега
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'NewTags'; // Это нужно для отправки тегов на сервер
+            hiddenInput.value = tag; // Присваиваем значение тега
+            container.appendChild(hiddenInput);
+        });
+    }
+
+    // Инициализируем отображение тегов при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function () {
+        updateTagDisplay(); // Показать уже выбранные теги
+    });
+
+</script>
