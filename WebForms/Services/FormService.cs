@@ -71,5 +71,11 @@ namespace WebForms.Services
         {
             await _formRepository.DeleteAsync(formId);
         }
+
+        public async Task<List<Form>> GetAllByTemplateAsync(int templateId)
+        {
+            var forms = await _formRepository.GetAllAsync();
+            return forms.Where(f => f.TemplateId == templateId).ToList();
+        }
     }
 }

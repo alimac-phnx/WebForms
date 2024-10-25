@@ -1,28 +1,5 @@
 ﻿@model List<WebForms.Models.Template>
 
-<h2>Search Results</h2>
+<h2>Search results</h2>
 
-@if (Model.Any())
-{
-    <ul>
-        @foreach (var template in Model)
-        {
-            <li>
-                <h3>@template.Name</h3>
-                <p>@template.Description</p>
-                <a href="@Url.Action("Details", "Template", new { id = template.Id })">Show more</a>
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>Nothing was found</p>
-}
-
-<form asp-action="Search" method="get">
-    <input type="text" name="query" placeholder="Enter your search query" />
-    <button type="submit">Search</button>
-</form>
-
-<a href="@Url.Action("Index")">Back to Home</a>
+<p>Nothing was found</p>

@@ -92,6 +92,7 @@ public class FormController : Controller
             TopicName = await _topicService.GetTopicNameAsync(template.TopicId),
             QuestionsCount = (await _questionService.GetVisibleQuestions(form.TemplateId)).Count,
             AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId),
+            AssignedAt = form.AssignedAt,
             Answers = form.Answers
         };
 
@@ -128,6 +129,7 @@ public class FormController : Controller
         return RedirectToAction("UserForms");
     }
 
+    [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
         var form = await _formService.GetFormByIdAsync(id);
@@ -142,10 +144,31 @@ public class FormController : Controller
             Template = template,
             TopicName = await _topicService.GetTopicNameAsync(template.TopicId),
             QuestionsCount = (await _questionService.GetVisibleQuestions(form.TemplateId)).Count,
-            AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId),
+            AssignedAt = form.AssignedAt,
+            AuthorName = await _templateService.GetTemplateAuthorNameAsync(form.AssignedByUserId),
             Answers = form.Answers
         };
 
         return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> FormsByTemplate(int id)
+    {
+        var template = await _templateService.GetTemplateByIdAsync(id);
+
+        var forms = await _formService.GetAllByTemplateAsync(id);
+
+        var viewModels = forms.Select(form => new FormEditViewModel
+        {
+            FormId = form.Id,
+            Template = template,
+            QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
+            TopicName = _topicService.GetTopicNameAsync(template.TopicId).Result,
+            AssignedAt = form.AssignedAt,
+            AuthorName = _templateService.GetTemplateAuthorNameAsync(form.AssignedByUserId).Result
+        }).ToList();
+
+        return View(viewModels);
     }
 }

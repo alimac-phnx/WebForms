@@ -14,6 +14,8 @@ namespace WebForms.ViewModels
 
         public string? AuthorName { get; set; }
 
+        public DateTime AssignedAt { get; set; }
+
         public List<Answer> Answers { get; set; } = new List<Answer>();
     }
 }

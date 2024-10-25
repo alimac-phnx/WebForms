@@ -18,6 +18,13 @@ namespace WebForms.Services
             return await _tagRepository.GetAllAsync();
         }
 
+        public async Task<List<string>> GetAllTagNamesAsync()
+        {
+            var tags = await _tagRepository.GetAllAsync();
+
+            return tags.Select(t => t.Name).ToList();
+        }
+
         public async Task<List<Tag>> GetExistingTagsAsync(List<string> tagNames)
         {
             return await _tagRepository.FindAsync(tag => tagNames.Contains(tag.Name));

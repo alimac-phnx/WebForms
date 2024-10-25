@@ -11,17 +11,20 @@ public class TemplateService
 
     private readonly ImageService _imageService;
 
+    private readonly TopicService _topicService;
+
     public readonly TagService _tagService;
 
     public readonly AccountService _accountService;
 
-    public TemplateService(ITemplateRepository templateRepository, QuestionService questionService, ImageService imageService, TagService tagService, AccountService accountService)
+    public TemplateService(ITemplateRepository templateRepository, QuestionService questionService, ImageService imageService, TopicService topicService, TagService tagService, AccountService accountService)
     {
         _templateRepository = templateRepository;
         _questionService = questionService;
         _imageService = imageService;
         _tagService = tagService;
         _accountService = accountService;
+        _topicService = topicService;
     }
 
     public async Task<List<Template>> GetAllTemplatesAsync()
@@ -87,8 +90,28 @@ public class TemplateService
         return (await _accountService.GetUserByIdAsync(userId)).Username;
     }
 
-    public async Task<List<Template>> SearchTemplateAuthorNameAsync(string query)
+    public async Task<List<Template>> SearchTemplatesByQueryAsync(string query)
     {
-        return await _templateRepository.FindAsync(t => t.Name.Contains(query) || t.Description.Contains(query));
+        var tagNames = await _tagService.GetAllTagNamesAsync();
+
+        var questionTexts = await _questionService.GetAllQuestionTextsAsync();
+
+        return await _templateRepository.FindAsync(t => t.Name.Contains(query) || t.Description.Contains(query) 
+        || tagNames.Contains(query) || questionTexts.Contains(query));
+    }
+
+    public List<TemplateDisplayViewModel> PrepareTemplatesToDisplay(List<Template> templates)
+    {
+        var userIds = templates.Select(t => t.CreatedByUserId).Distinct().ToList();
+
+        var viewModels = templates.Select(template => new TemplateDisplayViewModel
+        {
+            Template = template,
+            QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
+            TopicName = _topicService.GetTopicNameAsync(template.TopicId).Result,
+            AuthorName = GetTemplateAuthorNameAsync(template.CreatedByUserId).Result
+        }).ToList();
+
+        return viewModels;
     }
 }

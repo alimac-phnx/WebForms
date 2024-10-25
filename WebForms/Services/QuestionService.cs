@@ -1,5 +1,6 @@
 ﻿using WebForms.Interfaces;
 using WebForms.Models;
+using WebForms.Repositories;
 
 namespace WebForms.Services
 {
@@ -73,6 +74,13 @@ namespace WebForms.Services
         public async Task<List<Question>> GetVisibleQuestions(int templateId)
         {
             return await _questionRepository.FindAsync(q => q.TemplateId == templateId && q.IsVisible);
+        }
+
+        public async Task<List<string>> GetAllQuestionTextsAsync()
+        {
+            var questions = await _questionRepository.GetAllAsync();
+
+            return questions.Select(q => q.Text).ToList();
         }
     }
 }

@@ -1,15 +1,16 @@
-﻿@model List<WebForms.ViewModels.TemplateDisplayViewModel>
+﻿@model List<WebForms.ViewModels.FormEditViewModel>
 
-<h2 style="text-align:center; margin-top: 100px; margin-bottom: 100px">Templates</h2>
+<h2 class="my-4 head-text">Asigned forms</h2>
 
 @if (Model != null && Model.Any())
 {
     <div class="row">
-        @foreach (var item in Model)
+        @for (int i = 0; i < Model.Count; i++)
         {
+            var item = Model[i];
             var template = item.Template;
             <div class="template-card col-md-6 mb-4">
-                <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" style="text-decoration: none; color: inherit;">
+                <a href="@Url.Action("Details", "Form", new { id = item.FormId })" style="text-decoration: none; color: inherit;">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
 
@@ -22,7 +23,7 @@
                                         <strong>Topic:</strong> @item.TopicName<br />
                                         <strong>Questions:</strong> @item.QuestionsCount<br />
                                         <strong>Author:</strong> @item.AuthorName<br />
-                                        <strong>Created:</strong> @template.CreatedAt.ToString("yyyy-MM-dd")<br />
+                                        <strong>Created:</strong> @item.AssignedAt.ToString("yyyy-MM-dd")<br />
                                     </p>
 
                                     <div class="template-tags">
@@ -31,8 +32,6 @@
                                             <span class="tag">@tag.Name</span>
                                         }
                                     </div>
-
-                                    <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" class="btn btn-primary">Fill a form</a>
                                 </div>
 
                             </div>
@@ -52,5 +51,5 @@
 }
 else
 {
-    <p>No available templates</p>
+    <p>No assigned forms</p>
 }

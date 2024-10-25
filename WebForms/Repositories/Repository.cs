@@ -61,10 +61,9 @@ namespace WebForms.Repositories
             return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public async Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        public virtual async Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
             return await Task.Run(() => _dbSet.Where(predicate.Compile()).ToList(), cancellationToken);
         }
     }
-
 }
