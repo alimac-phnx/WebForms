@@ -34,20 +34,38 @@
                     if (question.IsVisible)
                     {
                         <div class="mb-3">
-                            <label for="question-@question.Id" class="form-label">@question.Text </label>
+                            <label for="question-@question.Id" class="form-label">@question.Text</label>
                             <input type="hidden" name="Answers[@i].QuestionId" value="@question.Id" />
+
                             @if (question.Type == "Checkbox")
                             {
                                 <input type="checkbox" class="form-check-input"
                                        id="answer-@question.Id"
-                                       asp-for="Answers[@i].Value" />
+                                       asp-for="Answers[@i].Value" required />
+                            }
+                            else if (question.Type == "SingleLine")
+                            {
+                                <input type="text" class="form-control"
+                                       id="answer-@question.Id"
+                                       asp-for="Answers[@i].Value"
+                                       maxlength="255"
+                                       placeholder="Answer should be in one line" required />
+                            }
+                            else if (question.Type == "Integer")
+                            {
+                                <input type="number" class="form-control"
+                                       id="answer-@question.Id"
+                                       asp-for="Answers[@i].Value"
+                                       inputmode="numeric"
+                                       pattern="\d*"
+                                       placeholder="Answer must be an integer" required />
                             }
                             else
                             {
                                 <input type="text" class="form-control"
                                        id="answer-@question.Id"
                                        asp-for="Answers[@i].Value"
-                                       placeholder="@WebForms.ViewModels.FormCreateViewModel.Placeholders[question.Type]" />
+                                       placeholder="Answer must contain a text" required />
                             }
                         </div>
                     }

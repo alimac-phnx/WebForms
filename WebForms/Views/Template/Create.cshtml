@@ -3,6 +3,13 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let questionIndex = 1;
+    let selectedTags = [];
+    const availableTags = @Html.Raw(Json.Serialize(Model.AvailableTags));
+</script>
+<script src ="~/js/create-template.js"></script>
+<script src="~/js/create-edit-template.js"></script>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="container mt-4 mb-5">
@@ -29,7 +36,6 @@
             </select>
         </div>
 
-
         <label>Image</label>
         <div class="form-group">
             <div class="position-relative d-inline-block">
@@ -46,195 +52,36 @@
             <div id="autocomplete-list" class="autocomplete-items"></div>
         </div>
 
-        <div id="selected-tags" class="mt-2"></div> <!-- Контейнер для отображения выбранных тегов -->
+        <div id="selected-tags" class="mt-2"></div>
 
         <div id="questions-container" class="mb-4" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h4>Questions</h4>
+
+            <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-0">
+                <h5>Question 1</h5>
+                <div class="form-group">
+                    <label for="Questions[0].Text">Text</label>
+                    <input type="text" class="form-control" name="Questions[0].Text" required />
+                </div>
+                <div class="form-group">
+                    <label for="Questions[0].Type">Type</label>
+                    <select name="Questions[0].Type" class="form-control">
+                        <option value="SingleLine">Single-line answer</option>
+                        <option value="MultipleLine">Text answer</option>
+                        <option value="Integer">Integer-value answer</option>
+                        <option value="Checkbox">Checkbox answer</option>
+                    </select>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" name="Questions[0].IsVisible" id="Questions[0].IsVisible" value="true" checked />
+                    <label class="form-check-label" for="Questions[0].IsVisible">Show in Form</label>
+                </div>
+
+                <button type="button" class="btn btn-danger" style="display: none;" onclick="removeQuestion(0)">Delete</button>
+            </div>
         </div>
-
-
 
         <button type="button" class="btn btn-secondary" onclick="addQuestion()">Add question</button>
         <button type="submit" class="btn btn-primary">Create</button>
     </div>
 </form>
-
-<script>
-    function previewImage(input) {
-        const file = input.files[0];
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const imgElement = document.getElementById('image');
-                imgElement.src = e.target.result; // Обновляем src у изображения
-                document.getElementById('remove-image-btn').style.display = 'block'; // Показываем кнопку удаления
-            };
-
-            reader.readAsDataURL(file); // Считываем файл и выводим как DataURL
-        }
-    }
-
-    function removeImage() {
-        const imgElement = document.getElementById('image');
-        imgElement.src = ''; // Очищаем изображение
-        document.querySelector('input[name="ImageFile"]').value = ''; // Очищаем поле ввода файла
-        document.getElementById('remove-image-btn').style.display = 'none'; // Скрываем кнопку удаления
-    }
-
-
-    let questionIndex = 0;
-
-    function addQuestion() {
-        const container = document.getElementById('questions-container');
-        const questionHtml = `
-                <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-${questionIndex}">
-                    <h5>Question ${questionIndex + 1}</h5>
-                    <div class="form-group">
-                        <label for="Questions[${questionIndex}].Text">Text</label>
-                        <input type="text" class="form-control" name="Questions[${questionIndex}].Text" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="Questions[${questionIndex}].Type">Type</label>
-                        <select name="Questions[${questionIndex}].Type" class="form-control">
-                            <option value="SingleLine">Single-line answer</option>
-                            <option value="MultipleLine">Text answer</option>
-                            <option value="Integer">Integer-value answer</option>
-                            <option value="Checkbox">Checkbox answer</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" name="Questions[${questionIndex}].IsVisible" id="Questions[${questionIndex}].IsVisible" value="true" checked />
-                        <label class="form-check-label" for="Questions[${questionIndex}].IsVisible">Show in Form</label>
-                    </div>
-
-                    <button type="button" class="btn btn-danger" onclick="removeQuestion(${questionIndex})">Delete question</button>
-                </div>
-            `;
-        container.insertAdjacentHTML('beforeend', questionHtml);
-        questionIndex++;
-    }
-
-    function removeQuestion(index) {
-        const questionElement = document.getElementById(`question-${index}`);
-        if (questionElement) {
-            questionElement.remove();
-        }
-    }
-
-    function drag(ev) {
-        ev.dataTransfer.setData("text", ev.target.id);
-    }
-
-    function drop(ev) {
-        ev.preventDefault();
-        const data = ev.dataTransfer.getData("text");
-        const draggedElement = document.getElementById(data);
-        const target = ev.target.closest('.question-item');
-
-        if (target) {
-            // Вставляем перетаскиваемый элемент перед целевым элементом
-            target.parentNode.insertBefore(draggedElement, target);
-        } else {
-            // Если перетаскиваемый элемент был сброшен в пустое место, добавляем его в конец контейнера
-            document.getElementById('questions-container').appendChild(draggedElement);
-        }
-    }
-
-    function allowDrop(ev) {
-        ev.preventDefault();
-    }
-
-
-    let selectedTags = [];
-
-    function showAutocomplete(value) {
-        const tags = @Html.Raw(Json.Serialize(Model.AvailableTags)); // Получаем теги из модели
-        const autocompleteList = document.getElementById('autocomplete-list');
-        autocompleteList.innerHTML = ''; // Очищаем список автозаполнения
-
-        if (!value) return false;
-
-        let foundTag = false; // Флаг, чтобы проверить наличие тега
-
-        tags.forEach(tag => {
-            if (tag.toLowerCase().startsWith(value.toLowerCase()) && !selectedTags.includes(tag)) { // Если тег есть среди доступных
-                const item = document.createElement('div');
-                item.innerHTML = tag;
-                item.onclick = () => {
-                    addTag(tag); // Добавляем тег при клике
-                    document.getElementById('Tags').value = '';
-                    autocompleteList.innerHTML = '';
-                };
-                autocompleteList.appendChild(item);
-                foundTag = true; // Тег найден
-            }
-        });
-
-        // Если тег не найден среди доступных, показываем кнопку "Add Tag"
-        if (!foundTag && value.trim().length > 0) {
-            const addItem = document.createElement('div');
-            addItem.innerHTML = `<button class="btn btn-primary btn-sm">Add tag "${value}"</button>`;
-            addItem.onclick = () => {
-                addTag(value); // Добавляем новый тег при клике
-                document.getElementById('Tags').value = '';
-                autocompleteList.innerHTML = '';
-            };
-            autocompleteList.appendChild(addItem);
-        }
-    }
-
-
-    function addTag(tag) {
-        if (!selectedTags.includes(tag)) { // Проверяем, чтобы тег не был добавлен повторно
-            selectedTags.push(tag); // Добавляем тег в массив выбранных
-            updateTagDisplay(); // Обновляем отображение "кирпичиков"
-        }
-    }
-
-    function removeTag(tag) {
-        selectedTags = selectedTags.filter(t => t !== tag); // Удаляем тег из массива
-        updateTagDisplay(); // Обновляем отображение
-    }
-
-    function updateTagDisplay() {
-        const container = document.getElementById('selected-tags');
-        container.innerHTML = ''; // Очищаем предыдущие отображенные теги
-
-        selectedTags.forEach(tag => {
-            const tagElement = document.createElement('div');
-            tagElement.classList.add('tag-item', 'd-inline-block', 'mr-2', 'mb-2', 'p-2', 'border', 'rounded');
-            tagElement.style.backgroundColor = '#e9ecef';
-
-            const tagText = document.createElement('span');
-            tagText.textContent = tag;
-
-            const removeButton = document.createElement('button');
-            removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-            removeButton.textContent = 'x';
-            removeButton.onclick = () => {
-                removeTag(tag); // Удаляем тег из выбранных
-            };
-
-            tagElement.appendChild(tagText);
-            tagElement.appendChild(removeButton);
-            container.appendChild(tagElement);
-
-            // Создаем отдельное скрытое поле для каждого тега
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'Tags'; // Убедитесь, что имя поля правильное
-            hiddenInput.value = tag; // Сохраняем значение тега
-            container.appendChild(hiddenInput);
-        });
-    }
-
-
-    document.addEventListener('click', function (e) {
-        const autocompleteItems = document.getElementById("autocomplete-list");
-        if (e.target != document.getElementById("Tags") && e.target != autocompleteItems) {
-            autocompleteItems.innerHTML = '';
-        }
-    });
-
-</script>

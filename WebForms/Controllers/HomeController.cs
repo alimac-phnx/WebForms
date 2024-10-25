@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebForms.Data;
 using WebForms.Models;
-using System.Linq;
+using WebForms.Services;
 using WebForms.ViewModels;
 
 
@@ -10,45 +8,34 @@ namespace WebForms.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly TemplateService _templateService;
 
-        public HomeController(ApplicationDbContext context)
+        private readonly TopicService _topicService;
+
+        public HomeController(TemplateService templateService, TopicService topicService)
         {
-            _context = context;
+            _templateService = templateService;
+            _topicService  = topicService;
         }
 
-        // Главная страница
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Получаем самые популярные шаблоны по количеству заполненных форм
-            var popularTemplates = await _context.Templates
-                .Include(t => t.Questions)
-                .Include(t => t.Tags)
-                .OrderByDescending(t => t.Questions.Count)
-                .ToListAsync();
+            var templates = await _templateService.GetAllTemplatesAsync();
 
-            // Получаем идентификаторы пользователей, создавших шаблоны
-            var userIds = popularTemplates.Select(t => t.CreatedByUserId).Distinct().ToList();
-
-            // Загружаем пользователей
-            var users = await _context.Users
-                .Where(u => userIds.Contains(u.Id))
-                .ToListAsync();
-            var topics = await _context.Topics.ToListAsync();
-            // Создаем модель представления
-            var viewModel = popularTemplates.Select(template => new TemplateDisplayViewModel
+            var userIds = templates.Select(t => t.CreatedByUserId).Distinct().ToList();
+            
+            var viewModel = templates.Select(template => new TemplateDisplayViewModel
             {
                 Template = template,
                 QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
-                TopicName = topics.FirstOrDefault(t => t.Id == template.TopicId).Name,
-                AuthorName = users.FirstOrDefault(u => u.Id == template.CreatedByUserId).Username
+                TopicName = _topicService.GetTopicNameAsync(template.TopicId).Result,
+                AuthorName = _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId).Result
             }).ToList();
 
             return View(viewModel);
         }
 
-        // Поиск шаблонов
         [HttpGet]
         public IActionResult Search(string query)
         {
@@ -57,9 +44,7 @@ namespace WebForms.Controllers
                 return View(new List<Template>());
             }
 
-            var searchResults = _context.Templates
-                .Where(t => t.Name.Contains(query) || t.Description.Contains(query))
-                .ToList();
+            var searchResults = _templateService.SearchTemplateAuthorNameAsync(query);
 
             return View(searchResults);
         }

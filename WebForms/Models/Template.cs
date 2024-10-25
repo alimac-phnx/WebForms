@@ -8,11 +8,11 @@
 
         public string Description { get; set; }
 
-        public int TopicId { get; set; } // Например: "Education", "Quiz", "Other"
+        public int TopicId { get; set; }
 
-        public string? ImageUrl { get; set; } // URL загруженного изображения
+        public string? ImageUrl { get; set; }
 
-        public List<Tag> Tags { get; set; } = new List<Tag>(); // Список тегов
+        public List<Tag> Tags { get; set; } = new List<Tag>();
 
         public int CreatedByUserId { get; set; }
 
@@ -20,6 +20,6 @@
 
         public DateTime UpdatedAt { get; set; }
 
-        public List<Question> Questions { get; set; } = new List<Question>(); // no migration yet -- formtemplate pair?
+        public List<Question> Questions { get; set; } = new List<Question>();
     }
 }

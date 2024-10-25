@@ -2,8 +2,7 @@
 
 namespace WebForms.Interfaces
 {
-    public interface ITopicRepository : IRepository<Topic>
+    public interface IAnswerRepository : IRepository<Answer>
     {
-
     }
 }

@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using WebForms.Data;
 using WebForms.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using WebForms.Interfaces;
 using WebForms.Repositories;
@@ -20,21 +18,33 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddSession();
 
-
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<WebForms.Services.ImageToCloudService>();
-
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<AccountService>();
+
+builder.Services.AddScoped<ImageService>();
+
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<QuestionService>();
+
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<TopicService>();
+
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<TagService>();
+
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<TemplateService>();
+
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+builder.Services.AddScoped<AnswerService>();
+
+builder.Services.AddScoped<IFormRepository, FormRepository>();
+builder.Services.AddScoped<FormService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });

@@ -12,7 +12,7 @@ namespace WebForms.Services
             _questionRepository = questionRepository;
         }
 
-        public async Task CreateQuestions(List<Question> questions)
+        public async Task CreateQuestionsAsync(List<Question> questions)
         {
             await _questionRepository.AddRangeAsync(questions);
         }
@@ -23,7 +23,7 @@ namespace WebForms.Services
             else return false;
         }
 
-        public async Task SolveQuestions(List<Question> questions, Template template)
+        public async Task SolveQuestionsAsync(List<Question> questions, Template template)
         {
             var newQuestions = new List<Question>();
 
@@ -40,7 +40,7 @@ namespace WebForms.Services
                 }
             }
 
-            await CreateQuestions(newQuestions);
+            await CreateQuestionsAsync(newQuestions);
         }
 
         public void UpdateQuestion(Question question, Template template)
@@ -55,7 +55,7 @@ namespace WebForms.Services
             }
         }
 
-        public async Task DeleteQuestions(List<Question> allQuestions, List<Question> templateQuestions)
+        public async Task DeleteQuestionsAsync(List<Question> allQuestions, List<Question> templateQuestions)
         {
             var questionsToDelete = new List<Question>();
 
@@ -68,6 +68,11 @@ namespace WebForms.Services
             }
 
             await _questionRepository.DeleteRangeAsync(questionsToDelete);
+        }
+
+        public async Task<List<Question>> GetVisibleQuestions(int templateId)
+        {
+            return await _questionRepository.FindAsync(q => q.TemplateId == templateId && q.IsVisible);
         }
     }
 }

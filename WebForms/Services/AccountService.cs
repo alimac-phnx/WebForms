@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using WebForms.Data;
+﻿using WebForms.Data;
 using WebForms.Interfaces;
 using WebForms.Models;
 
@@ -87,7 +86,7 @@ namespace WebForms.Services
             await _userRepository.UpdateAsync(user);
         }
 
-        public async Task<User> GetCurrentUserAsync(int userId)
+        public async Task<User> GetUserByIdAsync(int userId)
         {
             return await _userRepository.GetByIdAsync(userId);
         }

@@ -1,6 +1,4 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using WebForms.Models;
 
 namespace WebForms.Data
@@ -39,16 +37,16 @@ namespace WebForms.Data
             );
 
             modelBuilder.Entity<Template>()
-            .HasOne<User>() // Указываем, что у Form есть связь с User
-            .WithMany(u => u.CreatedTemplates) // Связь с коллекцией форм в User
-            .HasForeignKey(t => t.CreatedByUserId) // Указываем внешний ключ
-            .OnDelete(DeleteBehavior.Cascade); // Настройка поведения при удалении
+            .HasOne<User>()
+            .WithMany(u => u.CreatedTemplates)
+            .HasForeignKey(t => t.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Form>()
-            .HasOne<User>() // Указываем, что у Form есть связь с User
-            .WithMany(u => u.AssignedForms) // Связь с коллекцией форм в User
-            .HasForeignKey(f => f.AssignedByUserId) // Указываем внешний ключ
-            .OnDelete(DeleteBehavior.Cascade); // Настройка поведения при удалении
+            .HasOne<User>()
+            .WithMany(u => u.AssignedForms)
+            .HasForeignKey(f => f.AssignedByUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

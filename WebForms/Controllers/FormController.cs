@@ -1,71 +1,66 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebForms.Models;
 using WebForms.ViewModels;
-using WebForms.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using WebForms.Data;
-using Microsoft.SqlServer.Server;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using WebForms.Services;
 
 [Authorize]
 public class FormController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly FormService _formService;
 
-    private readonly ITemplateRepository _templateService;
+    private readonly TemplateService _templateService;
 
-    public FormController(ApplicationDbContext context, ITemplateRepository templateService)
+    private readonly TopicService _topicService;
+
+    private readonly QuestionService _questionService;
+
+    public FormController(FormService formService, TemplateService templateService, TopicService topicService, QuestionService questionService)
     {
-        _context = context;
+        _formService = formService;
         _templateService = templateService;
+        _topicService = topicService;
+        _questionService = questionService;
     }
 
+    [HttpGet]
     public async Task<IActionResult> UserForms()
     {
         int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
 
-        var formViewModels = await (from form in _context.Forms
-                           join template in _context.Templates
-                           on form.TemplateId equals template.Id
-                           where form.AssignedByUserId == userId
-                           select new FormTableViewModel
-                           {
-                               Id = form.Id,
-                               Name = template.Name,
-                               Description = template.Description,
-                               AssignedAt = form.AssignedAt,
-                               AnswerCount = _context.Answers.Count(a => a.FormId == form.Id)
-                           }).ToListAsync();
+        var forms = await _formService.GetFormsInfoAsync(userId);
 
-        return View(formViewModels);
+        var viewModels = forms.Select(form => new FormTableViewModel
+        {
+            Id = form.Id,
+            Name = form.Name,
+            Description = form.Description,
+            AssignedAt = form.AssignedAt,
+            AnswerCount = form.AnswerCount
+        }).ToList();
+
+        return View(viewModels);
     }
 
-    // Метод для отображения страницы с формой на основе шаблона
+    [HttpGet]
     public async Task<IActionResult> Create(int id)
     {
-        var template = await _templateService.GetByIdAsync(id);
-        if (template == null)
-        {
-            return NotFound();
-        }
+        var template = await _templateService.GetTemplateByIdAsync(id);
 
-        var topic = await _context.Topics.FindAsync(template.TopicId);
-        var user = await _context.Users.FindAsync(template.CreatedByUserId);
+        if (template == null) return NotFound();
+
+        var topic = await _topicService.GetTopicByIdAsync(template.TopicId);
 
         var viewModel = new FormCreateViewModel
         {
             Template = template,
             TopicName = topic.Name,
             QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
-            AuthorName = user.Username
+            AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId),
         };
 
         return View(viewModel);
     }
 
-    // Метод для обработки данных после отправки формы
     [HttpPost]
     public async Task<IActionResult> Create(FormCreateViewModel model)
     {
@@ -73,45 +68,30 @@ public class FormController : Controller
         {
             int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
 
-            var form = new Form()
-            {
-                TemplateId = model.Template.Id,
-                AssignedByUserId = userId,
-                AssignedAt = DateTime.Now,
-                Answers = model.Answers
-            };
-
-            _context.Answers.AddRange(model.Answers);
-            _context.Forms.Add(form);
-            await _context.SaveChangesAsync();
+            await _formService.CreateForm(model.Answers, model.Template.Id, userId);
 
             return RedirectToAction("Index", "Home");
         }
 
-        return View("Create", model); // Если валидация не прошла, отобразим форму заново
+        return View("Create", model);
     }
 
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var form = await _context.Forms.Include(f => f.Answers).FirstOrDefaultAsync(t => t.Id == id);
-        if (form == null)
-        {
-            return NotFound();
-        }
+        var form = await _formService.GetFormByIdAsync(id);
 
-        var template = await _context.Templates.Include(f => f.Questions).FirstOrDefaultAsync(t => t.Id == form.TemplateId);
-        var topic = await _context.Topics.FindAsync(template.TopicId);
-        var user = await _context.Users.FindAsync(template.CreatedByUserId);
+        if (form == null) return NotFound();
 
-        // Создаем ViewModel для передачи данных в представление
+        var template = await _templateService.GetTemplateByIdAsync(form.TemplateId);
+
         var model = new FormEditViewModel
         {
             FormId = form.Id,
             Template = template,
-            TopicName = topic.Name,
-            QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
-            AuthorName = user.Username,
+            TopicName = await _topicService.GetTopicNameAsync(template.TopicId),
+            QuestionsCount = (await _questionService.GetVisibleQuestions(form.TemplateId)).Count,
+            AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId),
             Answers = form.Answers
         };
 
@@ -124,16 +104,11 @@ public class FormController : Controller
     {
         if (ModelState.IsValid)
         {
-            var form = await _context.Forms.Include(f => f.Answers).FirstOrDefaultAsync(t => t.Id == model.FormId);
-            if (form == null)
-            {
-                return NotFound();
-            }
+            var form = await _formService.GetFormByIdAsync(model.FormId);
 
-            form.Answers = model.Answers;
-            form.AssignedAt = DateTime.Now;
+            if (form == null) return NotFound();
 
-            await _context.SaveChangesAsync();
+            await _formService.UpdateFormAsync(model.Answers, form);
 
             return RedirectToAction("UserForms");
         }
@@ -144,36 +119,30 @@ public class FormController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {
-        var form = await _context.Forms.FindAsync(id);
-        if (form == null)
-        {
-            return NotFound();
-        }
-        _context.Forms.Remove(form);
-        _context.SaveChanges();
+        var form = await _formService.GetFormByIdAsync(id);
+
+        if (form == null) return NotFound();
+
+        await _formService.DeleteFormAsync(id);
+
         return RedirectToAction("UserForms");
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var form = await _context.Forms.Include(f => f.Answers).FirstOrDefaultAsync(t => t.Id == id);
-        if (form == null)
-        {
-            return NotFound();
-        }
+        var form = await _formService.GetFormByIdAsync(id);
 
-        var template = await _context.Templates.Include(f => f.Questions).FirstOrDefaultAsync(t => t.Id == form.TemplateId);
-        var topic = await _context.Topics.FindAsync(template.TopicId);
-        var user = await _context.Users.FindAsync(template.CreatedByUserId);
+        if (form == null) return NotFound();
 
-        // Создаем ViewModel для передачи данных в представление
+        var template = await _templateService.GetTemplateByIdAsync(form.TemplateId);
+
         var model = new FormEditViewModel
         {
             FormId = form.Id,
             Template = template,
-            TopicName = topic.Name,
-            QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
-            AuthorName = user.Username,
+            TopicName = await _topicService.GetTopicNameAsync(template.TopicId),
+            QuestionsCount = (await _questionService.GetVisibleQuestions(form.TemplateId)).Count,
+            AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId),
             Answers = form.Answers
         };
 

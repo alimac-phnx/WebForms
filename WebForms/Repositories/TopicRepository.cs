@@ -8,6 +8,7 @@ namespace WebForms.Repositories
     {
         public TopicRepository(ApplicationDbContext context) : base(context)
         {
+
         }
     }
 }

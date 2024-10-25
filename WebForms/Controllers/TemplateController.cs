@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using WebForms.Interfaces;
 using WebForms.Models;
 using WebForms.Services;
 using WebForms.ViewModels;
@@ -13,31 +11,25 @@ namespace WebForms.Controllers
     {
         private readonly TemplateService _templateService;
 
-        public readonly IQuestionRepository _questionRepository;
+        public readonly ImageService _imageService;
 
-        public readonly ITemplateRepository _templateRepository;
-
-        public readonly ITopicRepository _topicRepository;
+        public readonly TopicService _topicService;
          
-        public readonly ITagRepository _tagRepository;
+        public readonly TagService _tagService;
 
-        public readonly IUserRepository _userRepository;
-
-        public TemplateController(TemplateService templateService, IQuestionRepository questionRepository, ITemplateRepository templateRepository, ITopicRepository topicRepository, ITagRepository tagRepository, IUserRepository userRepository)
+        public TemplateController(TemplateService templateService, TopicService topicService, TagService tagService, ImageService imageService)
         {
             _templateService = templateService;
-            _questionRepository = questionRepository;
-            _templateRepository = templateRepository;
-            _topicRepository = topicRepository;
-            _tagRepository = tagRepository;
-            _userRepository = userRepository;
+            _imageService = imageService;
+            _topicService = topicService;
+            _tagService = tagService;
         }
 
         [HttpGet]
         public async Task<IActionResult> UserTemplates()
         {
             int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
-            var templates = await _templateService.GetUserTemplates(userId);
+            var templates = await _templateService.GetUserTemplatesAsync(userId);
 
             return View(templates);
         }
@@ -45,11 +37,11 @@ namespace WebForms.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var tags = await _templateService.GetAllTags();
+            var tags = await _tagService.GetAllTagsAsync();
 
             var model = new TemplateCreateViewModel
             {
-                AvailableTopics = await _templateService.GetAllTopics(),
+                AvailableTopics = await _topicService.GetAllTopicsAsync(),
                 AvailableTags = tags.Select(t => t.Name).ToList()
             };
 
@@ -63,7 +55,7 @@ namespace WebForms.Controllers
             {
                 int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
 
-                await _templateService.CreateTemplate(model, userId);
+                await _templateService.CreateTemplateAsync(model, userId);
 
                 return RedirectToAction("UserTemplates");
             }
@@ -74,11 +66,11 @@ namespace WebForms.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var template = await _templateService.GetTemplate(id);
+            var template = await _templateService.GetTemplateByIdAsync(id);
 
-            if (template == null) { return NotFound(); }
+            if (template == null) return NotFound();
 
-            var tags = await _templateService.GetAllTags();
+            var tags = await _tagService.GetAllTagsAsync();
 
             var editTemplate = new TemplateEditViewModel()
             {
@@ -86,7 +78,7 @@ namespace WebForms.Controllers
                 Name = template.Name,
                 Description = template.Description,
                 TopicId = template.TopicId,
-                AvailableTopics = await _templateService.GetAllTopics(),
+                AvailableTopics = await _topicService.GetAllTopicsAsync(),
                 ImageUrl = template.ImageUrl,
                 CurrentTags = template.Tags.Select(t => t.Name).ToList(),
                 AvailableTags = tags.Select(t => t.Name).ToList(),
@@ -102,7 +94,7 @@ namespace WebForms.Controllers
         {
             if (ModelState.IsValid)
             {
-                var template = await _templateService.GetTemplate(model.TemplateId);
+                var template = await _templateService.GetTemplateByIdAsync(model.TemplateId);
 
                 if (model != null)
                 {
@@ -112,9 +104,9 @@ namespace WebForms.Controllers
                     template.Tags = new List<Tag>();
 
                     if (Request.Form["RemoveImage"] == "true") { template.ImageUrl = null; }
-                    else { await _templateService.AddImageToTemplate(model.NewImageFile, template); }
+                    else { await _imageService.AddImageToTemplateAsync(model.NewImageFile, template); }
 
-                    await _templateService.UpdateTemplate(model.NewTags, model.Questions, template);
+                    await _templateService.UpdateTemplateAsync(model.Tags, model.Questions, template);
 
                     return RedirectToAction("UserTemplates");
                 }
@@ -126,38 +118,31 @@ namespace WebForms.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var template = await _templateRepository.GetByIdAsync(id);
+            var template = await _templateService.GetTemplateByIdAsync(id);
 
-            if (template == null)
-            {
-                return NotFound();
-            }
+            if (template == null) return NotFound();
 
-            await _templateRepository.DeleteAsync(id);
+            await _templateService.DeleteTemplateAsync(id);
 
             return RedirectToAction("UserTemplates");
         }
 
-
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
-            var template = await _templateRepository.GetByIdAsync(id);
+            var template = await _templateService.GetTemplateByIdAsync(id);
 
-            if (template == null)
-            {
-                return NotFound();
-            }
+            if (template == null) return NotFound();
 
-            var topic = await _topicRepository.GetByIdAsync(template.TopicId);
-            var user = await _userRepository.GetByIdAsync(template.CreatedByUserId);
+            var topic = await _topicService.GetTopicByIdAsync(template.TopicId);
 
             var viewModel = new FormCreateViewModel
             {
                 Template = template,
                 TopicName = topic.Name,
                 QuestionsCount = template.Questions.Where(q => q.IsVisible).ToList().Count,
-                AuthorName = user.Username
+                AuthorName = await _templateService.GetTemplateAuthorNameAsync(template.CreatedByUserId)
             };
 
             return View(viewModel);
@@ -166,14 +151,8 @@ namespace WebForms.Controllers
         [AllowAnonymous]
         public IActionResult RedirectToFormOrTemplateView(int id)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Create", "Form", new { id });
-            }
-            else
-            {
-                return RedirectToAction("Details", new { id });
-            }
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Create", "Form", new { id });
+            else return RedirectToAction("Details", new { id });
         }
     }
 }

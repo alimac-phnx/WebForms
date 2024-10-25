@@ -6,9 +6,9 @@
 
         public string Text { get; set; }
 
-        public string Type { get; set; } // "Text", "SingleChoice", "MultipleChoice"
+        public string Type { get; set; }
 
-        public bool IsVisible { get; set; } // Показывать в таблице заполненных форм
+        public bool IsVisible { get; set; }
 
         public int TemplateId { get; set; }
     }

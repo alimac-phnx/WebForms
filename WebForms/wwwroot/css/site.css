@@ -29,41 +29,48 @@ body {
     margin-top: 100px !important;
 }
 
+.card-title {
+    height: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .card-text {
-    height: 70px; /* Ограничиваем высоту */
-    overflow: hidden; /* Скрываем лишний текст */
-    text-overflow: ellipsis; /* Добавляем многоточие */
-    display: -webkit-box; /* Для поддержки многоточия в Safari */
-    -webkit-box-orient: vertical; /* Вертикальная ориентация */
-    -webkit-line-clamp: 3; /* Ограничиваем количество строк */
+    height: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
 .table td {
-    max-width: 200px; /* Максимальная ширина ячейки */
-    white-space: nowrap; /* Запрещаем перенос строк */
-    overflow: hidden; /* Скрываем текст, выходящий за пределы */
-    text-overflow: ellipsis; /* Добавляем многоточие */
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .template-tags {
     margin-top: 10px;
     margin-bottom: 10px;
-    min-height: 40px;  /* Для обрезки по строкам */
-    max-width: 100%;       /* Ограничение ширины блока */
-    white-space: nowrap;    /* Не переносить текст на новую строку */
-    overflow: hidden;       /* Скрыть переполнение */
+    min-height: 40px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .template-tags .tag {
     display: inline-block;
-    background-color: #f0f0f0; /* Цвет фона для тегов */
-    color: #333; /* Цвет текста */
-    border-radius: 20px; /* Закругленные углы */
-    padding: 5px 10px; /* Отступы внутри "кирпичиков" */
-    margin-right: 5px; /* Отступ между тегами */
-    margin-bottom: 5px; /* Отступ снизу (если много тегов) */
-    font-size: 12px; /* Размер текста */
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
 }
 
 .img-fluid {

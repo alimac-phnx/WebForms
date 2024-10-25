@@ -18,7 +18,7 @@ namespace WebForms.ViewModels
 
         public List<string> CurrentTags = new List<string>();
 
-        public List<string> NewTags { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
 
         public List<Topic> AvailableTopics = new List<Topic>();
 

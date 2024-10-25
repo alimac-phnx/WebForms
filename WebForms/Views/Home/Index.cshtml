@@ -33,7 +33,7 @@
                                         <strong>Author:</strong> @item.AuthorName<br />
                                         <strong>Created:</strong> @template.CreatedAt.ToString("yyyy-MM-dd")<br />
                                     </p>
-                                    @* Отображение тегов *@
+
                                     <div class="template-tags">
                                         @foreach (var tag in template.Tags)
                                         {
@@ -41,11 +41,11 @@
                                         }
                                     </div>
 
-                                    <a href="@Url.Action("Create", "Form", new { id = template.Id })" class="btn btn-primary">Fill a form</a>
+                                    <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" class="btn btn-primary">Fill a form</a>
                                 </div>
 
                             </div>
-                            @* Проверка наличия изображения *@
+
                             @if (!string.IsNullOrEmpty(template.ImageUrl))
                             {
                                 <div class="col-md-4" style="padding-right: 10px;">
@@ -55,9 +55,7 @@
                         </div>
                     </div>
                 </a>
-
             </div>
-            
         }
     </div>
 }

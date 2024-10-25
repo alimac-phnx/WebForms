@@ -1,5 +1,51 @@
 ﻿@model WebForms.ViewModels.FormCreateViewModel
 
+@functions {
+    private string GetInputHtml(int index, Question question)
+    {
+        string inputHtml;
+
+        switch (question.Type)
+        {
+            case "Checkbox":
+                inputHtml = $@"
+                    <input type=""checkbox"" class=""form-check-input""
+                           id=""answer-{question.Id}""
+                           name=""Answers[{index}].Value"" value=""true"" required />";
+                break;
+
+            case "SingleLine":
+                inputHtml = $@"
+                    <input type=""text"" class=""form-control""
+                           id=""answer-{question.Id}""
+                           name=""Answers[{index}].Value""
+                           maxlength=""255""
+                           placeholder=""Answer should be in one line"" required />";
+                break;
+
+            case "Integer":
+                inputHtml = $@"
+                    <input type=""number"" class=""form-control""
+                           id=""answer-{question.Id}""
+                           name=""Answers[{index}].Value""
+                           inputmode=""numeric""
+                           pattern=""\d*""
+                           placeholder=""Answer must be an integer"" required />";
+                break;
+
+            default:
+                inputHtml = $@"
+                    <input type=""text"" class=""form-control""
+                           id=""answer-{question.Id}""
+                           name=""Answers[{index}].Value""
+                           placeholder=""Answer must contain a text"" required />";
+                break;
+        }
+
+        return inputHtml;
+    }
+}
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -27,7 +73,6 @@
                 }
             </div>
             
-
             <form asp-action="Create" method="post">
                 <input type="hidden" name="Template.Id" value="@Model.Template.Id" />
                 <input type="hidden" name="Template.Name" value="@Model.Template.Name" />
@@ -37,24 +82,12 @@
                 @for (int i = 0; i < Model.Template.Questions.Count; i++)
                 {
                     var question = Model.Template.Questions[i];
-                    if(question.IsVisible)
+                    if (question.IsVisible)
                     {
                         <div class="mb-3">
-                            <label for="question-@question.Id" class="form-label">@question.Text </label>
+                            <label for="question-@question.Id" class="form-label">@question.Text</label>
                             <input type="hidden" name="Answers[@i].QuestionId" value="@question.Id" />
-                            @if (question.Type == "Checkbox")
-                            {
-                                <input type="checkbox" class="form-check-input"
-                                       id="answer-@question.Id"
-                                       name="Answers[@i].Value" value="true" />
-                            }
-                            else
-                            {
-                                <input type="text" class="form-control"
-                                       id="answer-@question.Id"
-                                       name="Answers[@i].Value"
-                                       placeholder="@WebForms.ViewModels.FormCreateViewModel.Placeholders[question.Type]" />
-                            }
+                            @Html.Raw(GetInputHtml(i, question))
                         </div>
                     }
                 }
