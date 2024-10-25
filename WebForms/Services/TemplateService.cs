@@ -96,7 +96,7 @@ public class TemplateService
 
         var questionTexts = await _questionService.GetAllQuestionTextsAsync();
 
-        return await _templateRepository.FindAsync(t => t.Name.Contains(query) || t.Description.Contains(query) 
+        return await _templateRepository.FindAsync(t => t.Name.ToLower().Contains(query) || t.Description.ToLower().Contains(query) 
         || tagNames.Contains(query) || questionTexts.Contains(query));
     }
 

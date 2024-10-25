@@ -22,7 +22,7 @@ namespace WebForms.Services
         {
             var tags = await _tagRepository.GetAllAsync();
 
-            return tags.Select(t => t.Name).ToList();
+            return tags.Select(t => t.Name.ToLower()).ToList();
         }
 
         public async Task<List<Tag>> GetExistingTagsAsync(List<string> tagNames)

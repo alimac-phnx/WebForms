@@ -80,7 +80,7 @@ namespace WebForms.Services
         {
             var questions = await _questionRepository.GetAllAsync();
 
-            return questions.Select(q => q.Text).ToList();
+            return questions.Select(q => q.Text.ToLower()).ToList();
         }
     }
 }
