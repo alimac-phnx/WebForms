@@ -90,5 +90,10 @@ namespace WebForms.Services
         {
             return await _userRepository.GetByIdAsync(userId);
         }
+
+        public async Task<List<User>> FindSelectedUsers(List<int> selectedUsers)
+        {
+            return (await _userRepository.FindAsync(u => selectedUsers.Contains(u.Id))).ToList();
+        }
     }
 }

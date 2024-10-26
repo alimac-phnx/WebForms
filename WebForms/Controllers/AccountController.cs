@@ -29,10 +29,11 @@ namespace WebForms.Controllers
         {
             if (ModelState.IsValid && await _accountService.TryRegisterAsync(registrationData))
             {
-                return RedirectToAction("Login");
+                return View("Login");
             }
 
             if (ModelState.IsValid) { ModelState.AddModelError("", "The e-mail is already in use"); }
+
             return View(registrationData);
         }
 
@@ -42,12 +43,14 @@ namespace WebForms.Controllers
             return RedirectAuthUser();
         }
 
+        [NonAction]
         public IActionResult RedirectAuthUser()
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return View("Index", "Home");
             }
+
             return View();
         }
 
@@ -60,12 +63,15 @@ namespace WebForms.Controllers
 
                 SetCookie(email);
                 
-                return RedirectToAction("Index", "Home");
+                return View("Index", "Home");
             }
+
             ModelState.AddModelError("", "Incorrect username or password");
+
             return View();
         }
 
+        [NonAction]
         public void SetCookie(string email)
         {
             CookieOptions options = new CookieOptions
@@ -78,6 +84,7 @@ namespace WebForms.Controllers
             HttpContext.Response.Cookies.Append("UserId", _accountService.GetUserAsync(email).Result.Id.ToString(), options);
         }
 
+        [NonAction]
         public ClaimsIdentity GetClaimsIdentity(User user)
         {
             var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.Username), new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
@@ -85,11 +92,13 @@ namespace WebForms.Controllers
             return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
+        [NonAction]
         public AuthenticationProperties GetAuthProperties()
         {
             return new AuthenticationProperties { IsPersistent = true };
         }
 
+        [NonAction]
         public async Task<RedirectToActionResult> SetAuthenticationAsync(User user)
         {
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(GetClaimsIdentity(user)), GetAuthProperties());
@@ -103,7 +112,7 @@ namespace WebForms.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction("Login", "Account");
+            return View("Login", "Account");
         }
     }
 }
