@@ -8,7 +8,9 @@
         switch (question.Type)
         {
             case "Checkbox":
+                <input type="hidden" name="Answers[@index].Value" value="false" />
                 inputHtml = $@"
+                    
                     <input type=""checkbox"" class=""form-check-input""
                            id=""answer-{question.Id}""
                            name=""Answers[{index}].Value"" value=""true"" />";

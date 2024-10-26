@@ -8,6 +8,20 @@ html {
   }
 }
 
+.navbar-light-theme {
+    background-color: #ffffff;
+    color: #000;
+}
+
+.navbar-dark-theme {
+    background-color: #212529;
+    color: #fff;
+}
+
+.fixed-top {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
@@ -60,6 +74,24 @@ body {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    margin-top: 5px;
+}
+
+.tag-item {
+    margin-right: 10px;
+    border-radius: 20px
+}
+
+.tag-item span {
+    margin-left: 2px;
+    margin-right: 5px;
 }
 
 .table td {

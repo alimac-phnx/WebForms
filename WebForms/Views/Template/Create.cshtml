@@ -16,7 +16,7 @@
         <h2 class="mb-4">New template</h2>
 
         <div class="form-group">
-            <label for="Name">Name</label>
+            <label class ="mb-1" for="Name">Name</label>
             <input type="text" class="form-control" id="Name" name="Name" required />
         </div>
 
@@ -37,7 +37,7 @@
         </div>
 
         <label>Image</label>
-        <div class="form-group">
+        <div class="form-group mt-2">
             <div class="position-relative d-inline-block">
                 <img id="image" class="img-thumbnail mb-2" alt="No image" style="max-width: 200px;" />
                 <button type="button" id="remove-image-btn" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px; display: none;" onclick="removeImage()">x</button>
@@ -59,8 +59,7 @@
 
             <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-0">
                 <h5>Question 1</h5>
-                <div class="form-group">
-                    <label for="Questions[0].Text">Text</label>
+                <div class="form-group mt-2">
                     <input type="text" class="form-control" name="Questions[0].Text" required />
                 </div>
                 <div class="form-group">
@@ -77,7 +76,7 @@
                     <label class="form-check-label" for="Questions[0].IsVisible">Show in Form</label>
                 </div>
 
-                <button type="button" class="btn btn-danger" style="display: none;" onclick="removeQuestion(0)">Delete</button>
+                <button type="button" class="btn btn-danger mt-2" style="display: none;" onclick="removeQuestion(0)">Delete</button>
             </div>
         </div>
 

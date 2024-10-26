@@ -3,8 +3,7 @@
     const questionHtml = `
                 <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-${questionIndex}">
                     <h5>Question ${questionIndex + 1}</h5>
-                    <div class="form-group">
-                        <label for="Questions[${questionIndex}].Text">Text</label>
+                    <div class="form-group mt-2">
                         <input type="text" class="form-control" name="Questions[${questionIndex}].Text" required />
                     </div>
                     <div class="form-group">
@@ -18,10 +17,10 @@
                     </div>
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input" name="Questions[${questionIndex}].IsVisible" id="Questions[${questionIndex}].IsVisible" value="true" checked />
-                        <label class="form-check-label" for="Questions[${questionIndex}].IsVisible">Show in Form</label>
+                        <label class="form-check-label" for="Questions[${questionIndex}].IsVisible">Show in the form</label>
                     </div>
 
-                    <button type="button" class="btn btn-danger" onclick="removeQuestion(${questionIndex})">Delete</button>
+                    <button type="button" class="btn btn-danger mt-2" onclick="removeQuestion(${questionIndex})">Delete</button>
                 </div>
             `;
     container.insertAdjacentHTML('beforeend', questionHtml);
@@ -34,7 +33,6 @@ function removeQuestion(index) {
     const questionElement = document.getElementById(`question-${index}`);
     if (questionElement) {
         questionElement.remove();
-        questionIndex--;
     }
 
     updateDeleteButtonVisibility();
@@ -142,7 +140,7 @@ function updateTagDisplay() {
 
     selectedTags.forEach(tag => {
         const tagElement = document.createElement('div');
-        tagElement.classList.add('tag-item', 'd-inline-block', 'mr-2', 'mb-2', 'p-2', 'border', 'rounded');
+        tagElement.classList.add('tag-item', 'd-inline-block', 'mr-2', 'mb-2', 'p-2');
         tagElement.style.backgroundColor = '#e9ecef';
 
         const tagText = document.createElement('span');
