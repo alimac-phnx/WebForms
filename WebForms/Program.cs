@@ -25,7 +25,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AccountService>();
 
-builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<ImageService>();
 
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
