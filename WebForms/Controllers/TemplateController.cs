@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebForms.Models;
-using WebForms.Services;
+using WebForms.Services.Implementations;
+using WebForms.Services.Interfaces;
 using WebForms.ViewModels;
 
 namespace WebForms.Controllers
@@ -9,15 +10,15 @@ namespace WebForms.Controllers
     [Authorize]
     public class TemplateController : Controller
     {
-        private readonly TemplateService _templateService;
+        private readonly ITemplateService _templateService;
 
-        public readonly ImageService _imageService;
+        public readonly IImageService _imageService;
 
-        public readonly TopicService _topicService;
+        public readonly ITopicService _topicService;
          
-        public readonly TagService _tagService;
+        public readonly ITagService _tagService;
 
-        public TemplateController(TemplateService templateService, TopicService topicService, TagService tagService, ImageService imageService)
+        public TemplateController(ITemplateService templateService, ITopicService topicService, ITagService tagService, IImageService imageService)
         {
             _templateService = templateService;
             _imageService = imageService;

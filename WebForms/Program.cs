@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using WebForms.Data;
-using WebForms.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using WebForms.Interfaces;
-using WebForms.Repositories;
+using WebForms.Services.Implementations;
+using WebForms.Repositories.Implementations;
+using WebForms.Repositories.Interfaces;
+using WebForms.Services.Interfaces;
+using WebForms.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,27 +25,27 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
-builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-builder.Services.AddScoped<QuestionService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
-builder.Services.AddScoped<TopicService>();
+builder.Services.AddScoped<ITopicService, TopicService>();
 
 builder.Services.AddScoped<ITagRepository, TagRepository>();
-builder.Services.AddScoped<TagService>();
+builder.Services.AddScoped<ITagService, TagService>();
 
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
-builder.Services.AddScoped<TemplateService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
-builder.Services.AddScoped<AnswerService>();
+builder.Services.AddScoped<IAnswerService, AnswerService>();
 
 builder.Services.AddScoped<IFormRepository, FormRepository>();
-builder.Services.AddScoped<FormService>();
+builder.Services.AddScoped<IFormService, FormService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

@@ -1,34 +1,14 @@
-﻿const chk = document.getElementById('chk');
-const htmlElement = document.documentElement;
-const navbar = document.getElementById('navbar');
+﻿document.addEventListener('DOMContentLoaded', function () {
+    const chk = document.getElementById('chk');
+    const lightThemeForm = document.getElementById('lightThemeForm');
+    const darkThemeForm = document.getElementById('darkThemeForm');
 
-const currentTheme = localStorage.getItem('theme');
-
-if (currentTheme) {
-    htmlElement.setAttribute('data-bs-theme', currentTheme);
-    chk.checked = currentTheme === 'dark';
-
-    if (currentTheme === 'dark') {
-        navbar.classList.remove('navbar-light-theme');
-        navbar.classList.add('navbar-dark-theme');
-    } else {
-        navbar.classList.remove('navbar-dark-theme');
-        navbar.classList.add('navbar-light-theme');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    chk.addEventListener('change', () => {
+    chk.addEventListener('change', function () {
         if (chk.checked) {
-            htmlElement.setAttribute('data-bs-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            navbar.classList.remove('navbar-light-theme');
-            navbar.classList.add('navbar-dark-theme');
-        } else {
-            htmlElement.setAttribute('data-bs-theme', 'light');
-            localStorage.setItem('theme', 'light');
-            navbar.classList.remove('navbar-dark-theme');
-            navbar.classList.add('navbar-light-theme');
+            darkThemeForm.submit();
+        }
+        else {
+            lightThemeForm.submit();
         }
     });
 });

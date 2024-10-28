@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebForms.Services;
 using WebForms.Models;
 using System.Security.Claims;
-using WebForms.Data;
+using WebForms.ViewModels;
+using WebForms.Services.Interfaces;
 
 namespace WebForms.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AccountService _accountService;
+        private readonly IAccountService _accountService;
 
-        public AccountController(AccountService accountService)
+        public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
@@ -25,7 +25,7 @@ namespace WebForms.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegistrationData registrationData)
+        public async Task<IActionResult> RegisterAsync(RegistrationDataViewModel registrationData)
         {
             if (ModelState.IsValid && await _accountService.TryRegisterAsync(registrationData))
             {

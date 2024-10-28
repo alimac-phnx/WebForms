@@ -1,5 +1,10 @@
-﻿<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+﻿@{
+    var currentTheme = Context.Request.Cookies.ContainsKey("theme") ? Context.Request.Cookies["theme"] : "light";
+}
+
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="@currentTheme">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +17,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg fixed-top navbar-light-theme" id="navbar" ">
+        <nav class="navbar navbar-expand-lg fixed-top bg-body" id=" navbar" ">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">WebForms</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,12 +81,17 @@
                         }
                         <li class="nav-item">
                             <div id="switch">
-                                <input type="checkbox" class="checkbox" id="chk" />
-                                <label class="label" for="chk">
-                                    <i class="fas fa-moon"></i>
-                                    <i class="fas fa-sun"></i>
-                                    <div class="ball"></div>
-                                </label>
+                                <form action="@Url.Action("SetTheme", "Home")" method="post" style="display: inline;">
+                                    <input type="hidden" name="theme" value="@(currentTheme == "dark" ? "light" : "dark")" />
+                                    <button type="submit" class="btn" style="background: none; border: none; padding: 0;">
+                                        <input type="checkbox" class="checkbox" id="chk" @(currentTheme == "dark" ? "checked" : "") />
+                                        <label class="label" for="chk">
+                                            <i class="fas fa-moon"></i>
+                                            <i class="fas fa-sun"></i>
+                                            <div class="ball"></div>
+                                        </label>
+                                    </button>
+                                </form>
                             </div>
                         </li>
                     </ul>

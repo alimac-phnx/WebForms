@@ -8,16 +8,6 @@ html {
   }
 }
 
-.navbar-light-theme {
-    background-color: #ffffff;
-    color: #000;
-}
-
-.navbar-dark-theme {
-    background-color: #212529;
-    color: #fff;
-}
-
 .fixed-top {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -49,7 +39,7 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .card-body {

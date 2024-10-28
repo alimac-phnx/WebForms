@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebForms.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using WebForms.Services;
+using WebForms.Services.Implementations;
+using WebForms.Services.Interfaces;
 
 [Authorize]
 public class FormController : Controller
 {
-    private readonly FormService _formService;
+    private readonly IFormService _formService;
 
-    private readonly TemplateService _templateService;
+    private readonly ITemplateService _templateService;
 
-    private readonly TopicService _topicService;
+    private readonly ITopicService _topicService;
 
-    private readonly QuestionService _questionService;
+    private readonly IQuestionService _questionService;
 
-    public FormController(FormService formService, TemplateService templateService, TopicService topicService, QuestionService questionService)
+    public FormController(IFormService formService, ITemplateService templateService, ITopicService topicService, IQuestionService questionService)
     {
         _formService = formService;
         _templateService = templateService;
