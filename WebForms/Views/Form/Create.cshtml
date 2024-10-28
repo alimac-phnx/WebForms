@@ -81,16 +81,19 @@
                 <input type="hidden" name="Template.Description" value="@Model.Template.Description" />
                 <input type="hidden" name="Template.CreatedByUserId" value="@Model.Template.CreatedByUserId" />
 
-                @for (int i = 0; i < Model.Template.Questions.Count; i++)
+                @{ int i = 0; }
+
+                @foreach(var question in Model.Template.Questions)
                 {
-                    var question = Model.Template.Questions[i];
                     if (question.IsVisible)
                     {
                         <div class="mb-3">
                             <label for="question-@question.Id" class="form-label">@question.Text</label>
-                            <input type="hidden" name="Answers[@i].QuestionId" value="@question.Id" />
+                            <input type="hidden" name="Answers[i].QuestionId" value="@question.Id" />
                             @Html.Raw(GetInputHtml(i, question))
                         </div>
+
+                        i++;
                     }
                 }
 
