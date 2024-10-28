@@ -1,4 +1,6 @@
-﻿@model WebForms.ViewModels.FormCreateViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model WebForms.ViewModels.FormCreateViewModel
 
 @functions {
     private string GetInputHtml(int index, Question question)
@@ -61,9 +63,9 @@
             <h2 class="text-center mb-3">@Model.Template.Name</h2>
             <p class="text-muted text-center mb-5">@Model.Template.Description</p>
             <p class="text-muted text-center mb-5">
-                <strong>Topic:</strong> @Model.TopicName<br />
-                <strong>Questions:</strong> @Model.QuestionsCount<br />
-                <strong>Author:</strong> @Model.AuthorName<br />
+                <strong>@Localizer["Topic"]:</strong> @Localizer[@Model.TopicName]<br />
+                <strong>@Localizer["Questions"]:</strong> @Model.QuestionsCount<br />
+                <strong>@Localizer["Author"]:</strong> @Model.AuthorName<br />
             </p>
 
             <div class ="text-center">
@@ -98,7 +100,7 @@
                 }
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary w-100">Fill</button>
+                    <button type="submit" class="btn btn-primary w-100">@Localizer["Fill"]</button>
                 </div>
             </form>
         </div>

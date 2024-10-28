@@ -1,6 +1,8 @@
-﻿@model List<WebForms.ViewModels.FormEditViewModel>
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model List<WebForms.ViewModels.FormEditViewModel>
 
-<h2 class="my-4 head-text">Asigned forms</h2>
+<h2 class="my-4 head-text">@Localizer["Assigned forms"]</h2>
 
 @if (Model != null && Model.Any())
 {
@@ -20,10 +22,10 @@
                                     <p class="card-text">@template.Description</p>
 
                                     <p class="text-muted">
-                                        <strong>Topic:</strong> @item.TopicName<br />
-                                        <strong>Questions:</strong> @item.QuestionsCount<br />
-                                        <strong>Author:</strong> @item.AuthorName<br />
-                                        <strong>Created:</strong> @item.AssignedAt.ToString("yyyy-MM-dd")<br />
+                                        <strong>@Localizer["Topic"]:</strong> @Localizer[@item.TopicName]<br />
+                                        <strong>@Localizer["Questions"]:</strong> @item.QuestionsCount<br />
+                                        <strong>@Localizer["Author"]:</strong> @item.AuthorName<br />
+                                        <strong>@Localizer["Created"]:</strong> @item.AssignedAt.ToString("yyyy-MM-dd")<br />
                                     </p>
 
                                     <div class="template-tags">
@@ -51,5 +53,5 @@
 }
 else
 {
-    <p>No assigned forms</p>
+    <p>@Localizer["No assigned forms"]</p>
 }

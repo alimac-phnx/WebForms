@@ -1,18 +1,20 @@
-﻿@{
-    ViewBag.Title = "Log in";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    ViewBag.Title = @Localizer["Log in"];
 }
 
 <form asp-action="Login" method="post" class="container mt-4">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <h1 class="text-center mb-4">Log in</h1>
+            <h1 class="text-center mb-4">@Localizer["Log in"]</h1>
             <div class="form-floating mb-3">
                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" required>
-                <label for="floatingInput">Email address</label>
+                <label for="floatingInput">@Localizer["Email address"]</label>
             </div>
             <div class="form-floating">
                 <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword">@Localizer["Password"]</label>
             </div>
 
             @if (!ViewData.ModelState.IsValid)
@@ -20,12 +22,12 @@
                 <div class="alert alert-danger mt-3">
                     @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                     {
-                        <p>@error.ErrorMessage</p>
+                        <p>@Localizer[@error.ErrorMessage]</p>
                     }
                 </div>
             }
 
-            <button type="submit" class="btn btn-primary btn-block mt-3">Log in</button>
+            <button type="submit" class="btn btn-primary btn-block mt-3">@Localizer["Log in"]</button>
         </div>
     </div>
 </form>

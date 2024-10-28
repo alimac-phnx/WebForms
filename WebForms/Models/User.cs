@@ -6,14 +6,10 @@ namespace WebForms.Models
     {
         public int Id { get; set; }
 
-        [Required]
         public string Username { get; set; }
 
-        [Required]
-        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "The email must math this form: *@*.*")]
         public string Email { get; set; }
 
-        [Required]
         public string PasswordHash { get; set; }
 
         public DateTime RegistrationDate { get; set; }
@@ -24,8 +20,8 @@ namespace WebForms.Models
 
         public string Status { get; set; }
 
-        public ICollection<Template> CreatedTemplates { get; set; } = new List<Template>();
+        public List<Template> CreatedTemplates { get; set; } = new List<Template>();
 
-        public ICollection<Form> AssignedForms { get; set; } = new List<Form>();
+        public List<Form> AssignedForms { get; set; } = new List<Form>();
     }
 }

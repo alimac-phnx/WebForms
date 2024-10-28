@@ -1,4 +1,6 @@
-﻿@model WebForms.ViewModels.FormEditViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model WebForms.ViewModels.FormEditViewModel
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -12,9 +14,9 @@
 
             <h2 class="text-center mb-3">@Model.Template.Name</h2>
             <p class="text-muted text-center mb-5">@Model.Template.Description</p><p class="text-muted text-center mb-5">
-                <strong>Topic:</strong> @Model.TopicName<br />
-                <strong>Questions:</strong> @Model.QuestionsCount<br />
-                <strong>Author:</strong> @Model.AuthorName<br />
+                <strong>@Localizer["Topic"]:</strong> @Localizer[@Model.TopicName]<br />
+                <strong>@Localizer["Questions"]:</strong> @Model.QuestionsCount<br />
+                <strong>@Localizer["Author"]:</strong> @Model.AuthorName<br />
             </p>
 
             <div class="text-center">
@@ -52,7 +54,7 @@
                                        id="answer-@question.Id"
                                        asp-for="Answers[@i].Value"
                                        maxlength="255"
-                                       placeholder="Answer should be in one line" required />
+                                       placeholder="@Localizer["Answer should be in one line"]" required />
                             }
                             else if (question.Type == "Integer")
                             {
@@ -61,14 +63,14 @@
                                        asp-for="Answers[@i].Value"
                                        inputmode="numeric"
                                        pattern="\d*"
-                                       placeholder="Answer must be an integer" required />
+                                       placeholder="@Localizer["Answer must be an integer"]" required />
                             }
                             else
                             {
                                 <input type="text" class="form-control"
                                        id="answer-@question.Id"
                                        asp-for="Answers[@i].Value"
-                                       placeholder="Answer must contain a text" required />
+                                       placeholder="@Localizer["Answer must contain a text"]" required />
                             }
                         </div>
                         i++;
@@ -76,7 +78,7 @@
                 }
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-success w-100">Save</button>
+                    <button type="submit" class="btn btn-success w-100">@Localizer["Save"]</button>
                 </div>
             </form>
         </div>

@@ -52,8 +52,8 @@ namespace WebForms.Services.Implementations
                 AssignedAt = DateTime.Now
             };
 
-            await _formRepository.AddAsync(form, cancellationToken);
             form.Answers = answers;
+            await _formRepository.AddAsync(form, cancellationToken);
 
             await _answerService.AddAnswersAsync(answers, cancellationToken);
             await _formRepository.UpdateAsync(form, cancellationToken);
@@ -76,6 +76,7 @@ namespace WebForms.Services.Implementations
         public async Task<List<Form>> GetAllByTemplateAsync(int templateId, CancellationToken cancellationToken = default)
         {
             var forms = await _formRepository.GetAllAsync(cancellationToken);
+
             return forms.Where(f => f.TemplateId == templateId).ToList();
         }
     }

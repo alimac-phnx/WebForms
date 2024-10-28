@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using WebForms.Models;
 using WebForms.Services.Interfaces;
@@ -50,6 +51,22 @@ namespace WebForms.Controllers
                 Response.Cookies.Append("theme", theme, options);
             }
             return Redirect(Request.Headers.Referer.ToString());
+        }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string language)
+        {
+            if (!string.IsNullOrEmpty(language))
+            {
+                CookieOptions options = new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddYears(1)
+                };
+                Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language)), options);
+            }
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
     }
 }

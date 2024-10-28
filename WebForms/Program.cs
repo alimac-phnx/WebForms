@@ -6,8 +6,15 @@ using WebForms.Repositories.Implementations;
 using WebForms.Repositories.Interfaces;
 using WebForms.Services.Interfaces;
 using WebForms.Middlewares;
+using Microsoft.AspNetCore.Localization.Routing;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using System.Globalization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -22,7 +29,23 @@ builder.Services.AddSession();
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+     .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization();
+
+var supportedCultures = new[]
+{
+    new CultureInfo("ru"),
+    new CultureInfo("en")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+    options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider());
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
@@ -62,6 +85,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 
 app.UseRouting();
 

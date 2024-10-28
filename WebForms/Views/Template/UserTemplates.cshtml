@@ -1,16 +1,18 @@
-﻿@model IEnumerable<WebForms.Models.Template>
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model IEnumerable<WebForms.Models.Template>
 
-<h2 class="mt-4 mb-4">Templates</h2>
+<h2 class="mt-4 mb-4">@Localizer["My templates"]</h2>
 
 <div class="table">
     <table class="table table-hover">
         <thead class="table">
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Questions</th>
-                <th>Date of creation</th>
-                <th>Actions</th>
+                <th>@Localizer["Name"]</th>
+                <th>@Localizer["Description"]</th>
+                <th>@Localizer["Questions"]</th>
+                <th>@Localizer["Date of creation"]</th>
+                <th>@Localizer["Actions"]</th>
             </tr>
         </thead>
         <tbody>
@@ -40,4 +42,4 @@
     </table>
 </div>
 
-<a href="@Url.Action("Create")" class="btn btn-primary mt-3">Create new</a>
+<a href="@Url.Action("Create")" class="btn btn-primary mt-3">@Localizer["Create new"]</a>

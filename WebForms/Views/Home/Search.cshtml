@@ -1,5 +1,7 @@
-﻿@model List<WebForms.Models.Template>
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model List<WebForms.Models.Template>
 
-<h2>Search results</h2>
+<h2>@Localizer["Search results"]</h2>
 
-<p>Nothing was found</p>
+<p>@Localizer["Nothing was found"]</p>

@@ -1,22 +1,24 @@
-﻿@{
-    ViewBag.Title = "Registration";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    ViewBag.Title = @Localizer["Registration"];
 }
 
 <form asp-action="Register" method="post" class="container mt-4">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <h1 class="text-center mb-4">Register</h1>
+            <h1 class="text-center mb-4">@Localizer["Registration"]</h1>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="floatingNickname" placeholder="Username" name="Username" required>
-                <label for="floatingNickname">Username</label>
+                <label for="floatingNickname">@Localizer["Username"]</label>
             </div>
             <div class="form-floating mb-3">
                 <input type="email" class="form-control" id="floatingEmail" placeholder="name@example.com" name="Email" required>
-                <label for="floatingEmail">Email address</label>
+                <label for="floatingEmail">@Localizer["Email address"]"</label>
             </div>
             <div class="form-floating">
                 <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="Password" required>
-                <label for="floatingPassword">Password</label>
+                <label for="floatingPassword">@Localizer["Password"]</label>
             </div>
 
             @if (!ViewData.ModelState.IsValid)
@@ -24,12 +26,12 @@
                 <div class="alert alert-danger mt-3">
                     @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                     {
-                        <p>@error.ErrorMessage</p>
+                        <p>@Localizer[@error.ErrorMessage]</p>
                     }
                 </div>
             }
 
-            <button type="submit" class="btn btn-primary btn-block mt-3">Register</button>
+            <button type="submit" class="btn btn-primary btn-block mt-3">@Localizer["Register"]</button>
         </div>
     </div>
 </form>

@@ -1,4 +1,7 @@
-﻿@model WebForms.ViewModels.TemplateCreateViewModel
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using WebForms.Models;
+@inject IViewLocalizer Localizer
+@model WebForms.ViewModels.TemplateCreateViewModel
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -8,38 +11,38 @@
     let selectedTags = [];
     const availableTags = @Html.Raw(Json.Serialize(Model.AvailableTags));
 </script>
-<script src ="~/js/create-template.js"></script>
+<script src="~/js/create-template.js"></script>
 <script src="~/js/create-edit-template.js"></script>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="container mt-4 mb-5">
-        <h2 class="mb-4">New template</h2>
+        <h2 class="mb-4">@Localizer["New template"]</h2>
 
         <div class="form-group">
-            <label class ="mb-1" for="Name">Name</label>
+            <label class="mb-1" for="Name">@Localizer["Name"]</label>
             <input type="text" class="form-control" id="Name" name="Name" required />
         </div>
 
         <div class="form-group">
-            <label for="Description">Description</label>
+            <label for="Description">@Localizer["Description"]</label>
             <textarea class="form-control" id="Description" name="Description" rows="3" required></textarea>
         </div>
 
         <div class="form-group">
-            <label for="Topic">Topic</label>
+            <label for="Topic">@Localizer["Topic"]</label>
             <select class="form-control" id="Topic" name="TopicId" required>
-                <option value="">Choose topic</option>
+                <option value="">@Localizer["Choose topic"]</option>
                 @foreach (var topic in Model.AvailableTopics)
                 {
-                    <option value="@topic.Id">@topic.Name</option>
+                    <option value="@topic.Id">@Localizer[@topic.Name]</option>
                 }
             </select>
         </div>
 
-        <label>Image</label>
+        <label>@Localizer["Image"]</label>
         <div class="form-group mt-2">
             <div class="position-relative d-inline-block">
-                <img id="image" class="img-thumbnail mb-2" alt="No image" style="max-width: 200px;" />
+                <img id="image" class="img-thumbnail mb-2" alt="@Localizer["No image"]" style="max-width: 200px;" />
                 <button type="button" id="remove-image-btn" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px; display: none;" onclick="removeImage()">x</button>
             </div>
             <input type="file" class="form-control" name="ImageFile" accept="image/*" onchange="previewImage(this)" />
@@ -47,40 +50,40 @@
         </div>
 
         <div class="form-group">
-            <label for="Tags">Tags</label>
-            <input type="text" class="form-control" id="Tags" name="Tags" autocomplete="off" placeholder="Enter tag..." oninput="showAutocomplete(this.value)" />
+            <label for="Tags">@Localizer["Tags"]</label>
+            <input type="text" class="form-control" id="Tags" name="Tags" autocomplete="off" placeholder="@Localizer["Enter tag"]..." oninput="showAutocomplete(this.value)" />
             <div id="autocomplete-list" class="autocomplete-items"></div>
         </div>
 
         <div id="selected-tags" class="mt-2"></div>
 
         <div id="questions-container" class="mb-4" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h4>Questions</h4>
+            <h4>@Localizer["Questions"]</h4>
 
             <div class="question-item border rounded p-3 mb-3" draggable="true" ondragstart="drag(event)" id="question-0">
-                <h5>Question 1</h5>
+                <h5>@Localizer["Question"] 1</h5>
                 <div class="form-group mt-2">
                     <input type="text" class="form-control" name="Questions[0].Text" required />
                 </div>
                 <div class="form-group">
-                    <label for="Questions[0].Type">Type</label>
+                    <label for="Questions[0].Type">@Localizer["Type"]</label>
                     <select name="Questions[0].Type" class="form-control">
-                        <option value="SingleLine">Single-line answer</option>
-                        <option value="MultipleLine">Text answer</option>
-                        <option value="Integer">Integer-value answer</option>
-                        <option value="Checkbox">Checkbox answer</option>
+                        <option value="SingleLine">@Localizer["Single-line answer"]</option>
+                        <option value="MultipleLine">@Localizer["Text answer"]</option>
+                        <option value="Integer">@Localizer["Integer-value answer"]</option>
+                        <option value="Checkbox">@Localizer["Checkbox answer"]</option>
                     </select>
                 </div>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" name="Questions[0].IsVisible" id="Questions[0].IsVisible" value="true" checked />
-                    <label class="form-check-label" for="Questions[0].IsVisible">Show in Form</label>
+                    <label class="form-check-label" for="Questions[0].IsVisible">@Localizer["Show in Form"]</label>
                 </div>
 
-                <button type="button" class="btn btn-danger mt-2" style="display: none;" onclick="removeQuestion(0)">Delete</button>
+                <button type="button" class="btn btn-danger mt-2" style="display: none;" onclick="removeQuestion(0)">@Localizer["Delete"]</button>
             </div>
         </div>
 
-        <button type="button" class="btn btn-secondary" onclick="addQuestion()">Add question</button>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="button" class="btn btn-secondary" onclick="addQuestion()">@Localizer["Add Question"]</button>
+        <button type="submit" class="btn btn-primary">@Localizer["Create"]</button>
     </div>
 </form>

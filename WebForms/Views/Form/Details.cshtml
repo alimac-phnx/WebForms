@@ -1,4 +1,6 @@
-﻿@model WebForms.ViewModels.FormEditViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model WebForms.ViewModels.FormEditViewModel
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -12,9 +14,9 @@
 
             <h2 class="text-center mb-3">@Model.Template.Name</h2>
             <p class="text-muted text-center mb-5">@Model.Template.Description</p><p class="text-muted text-center mb-5">
-                <strong>Topic:</strong> @Model.TopicName<br />
-                <strong>Answers:</strong> @Model.Answers.Count<br />
-                <strong>Author:</strong> @Model.AuthorName<br />
+                <strong>@Localizer["Topic"]:</strong> @Localizer[@Model.TopicName]<br />
+                <strong>@Localizer["Answers"]:</strong> @Model.Answers.Count<br />
+                <strong>@Localizer["Author"]:</strong> @Model.AuthorName<br />
             </p>
 
             <div class="text-center">

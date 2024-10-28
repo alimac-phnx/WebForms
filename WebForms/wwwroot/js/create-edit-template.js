@@ -27,6 +27,7 @@
     questionIndex++;
 
     updateDeleteButtonVisibility();
+    updateQuestionOrder();
 }
 
 function removeQuestion(index) {
@@ -36,6 +37,7 @@ function removeQuestion(index) {
     }
 
     updateDeleteButtonVisibility();
+    updateQuestionOrder();
 }
 
 function updateDeleteButtonVisibility() {
@@ -69,6 +71,9 @@ function updateQuestionOrder() {
 
         const isVisibleInput = item.querySelector('input[type="checkbox"]');
         isVisibleInput.name = `Questions[${index}].IsVisible`;
+
+        const deleteButton = item.querySelector('button.btn-danger');
+        deleteButton.setAttribute('onclick', removeQuestion(index));
     });
 }
 
@@ -114,7 +119,7 @@ function showAutocomplete(value) {
 
     if (!foundTag && value.trim().length > 0) {
         const addItem = document.createElement('div');
-        addItem.innerHTML = `<button class="btn btn-primary btn-sm">Add tag "${value}"</button>`;
+        addItem.innerHTML = `<button type="button" class="btn btn-primary btn-sm">Add tag "${value}"</button>`;
         addItem.onclick = () => {
             addTag(value);
         };

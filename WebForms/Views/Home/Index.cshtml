@@ -1,6 +1,8 @@
-﻿@model List<WebForms.ViewModels.TemplateDisplayViewModel>
+﻿﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model List<WebForms.ViewModels.TemplateDisplayViewModel>
 
-<h2 style="text-align:center; margin-top: 60px; margin-bottom: 100px">Templates</h2>
+<h2 style="text-align:center; margin-top: 100px; margin-bottom: 100px">@Localizer["Templates"]</h2>
 
 @if (Model != null && Model.Any())
 {
@@ -19,10 +21,10 @@
                                     <p class="card-text">@template.Description</p>
 
                                     <p class="text-muted">
-                                        <strong>Topic:</strong> @item.TopicName<br />
-                                        <strong>Questions:</strong> @item.QuestionsCount<br />
-                                        <strong>Author:</strong> @item.AuthorName<br />
-                                        <strong>Created:</strong> @template.CreatedAt.ToString("yyyy-MM-dd")<br />
+                                        <strong>@Localizer["Topic"]:</strong> @Localizer[@item.TopicName]<br />
+                                        <strong>@Localizer["Questions"]:</strong> @item.QuestionsCount<br />
+                                        <strong>@Localizer["Author"]:</strong> @item.AuthorName<br />
+                                        <strong>@Localizer["Created"]:</strong> @template.CreatedAt.ToString("yyyy-MM-dd")<br />
                                     </p>
 
                                     <div class="template-tags">
@@ -32,7 +34,7 @@
                                         }
                                     </div>
 
-                                    <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" class="btn btn-primary">Fill a form</a>
+                                    <a href="@Url.Action("RedirectToFormOrTemplateView", "Template", new { id = template.Id })" class="btn btn-primary">@Localizer["Fill a form"]</a>
                                 </div>
 
                             </div>
@@ -52,5 +54,5 @@
 }
 else
 {
-    <p>No available templates</p>
+    <p>@Localizer["No available templates"]</p>
 }
