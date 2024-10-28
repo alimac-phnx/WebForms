@@ -52,8 +52,8 @@ namespace WebForms.Services.Implementations
                 AssignedAt = DateTime.Now
             };
 
-            form.Answers = answers;
             await _formRepository.AddAsync(form, cancellationToken);
+            form.Answers = answers;
 
             await _answerService.AddAnswersAsync(answers, cancellationToken);
             await _formRepository.UpdateAsync(form, cancellationToken);

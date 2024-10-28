@@ -73,7 +73,7 @@ function updateQuestionOrder() {
         isVisibleInput.name = `Questions[${index}].IsVisible`;
 
         const deleteButton = item.querySelector('button.btn-danger');
-        deleteButton.setAttribute('onclick', removeQuestion(index));
+        deleteButton.setAttribute('onclick', 'removeQuestion(${index})');
     });
 }
 
