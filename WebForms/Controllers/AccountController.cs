@@ -6,6 +6,11 @@ using WebForms.Models;
 using System.Security.Claims;
 using WebForms.ViewModels;
 using WebForms.Services.Interfaces;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Text;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Json;
 
 namespace WebForms.Controllers
 {
@@ -105,7 +110,48 @@ namespace WebForms.Controllers
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return View("Login", "Account");
+            return RedirectToAction("Login");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyProfile()
+        {
+            int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
+            var user = await _accountService.GetUserByIdAsync(userId);
+
+            var viewmodel = new RegistrationDataViewModel
+            {
+                Username = user.Username,
+                Email = user.Email,
+            };
+
+            return View(viewmodel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateSalesforceAccount()
+        {
+            int userId = int.Parse(HttpContext.Request.Cookies["UserId"]);
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "00DQy00000EpNiU!AQEAQKb_Q2QfFczhh9qDYqjn6Fap47UU_CqnSP32YTXCAGhZLdR8KKQ.G9lDpF_agoDdSpWHmJfAsZkVDZoNGGF3ZnLkXpIj");
+
+            var accountContent = await _accountService.PrepareSfAccount(userId);
+
+            var response = await client.PostAsync("https://takeorg-dev-ed.develop.my.salesforce.com/services/data/v56.0/sobjects/Account", accountContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+
+                var contactContent = await _accountService.PrepareSfAccountContact(result, accountContent);
+
+                await client.PostAsync("https://takeorg-dev-ed.develop.my.salesforce.com/services/data/v56.0/sobjects/Contact", contactContent);
+            }
+            else ModelState.AddModelError("", "Unexpected error");
+
+            return RedirectToAction("MyProfile");
         }
     }
 }

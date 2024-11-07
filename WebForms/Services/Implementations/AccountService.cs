@@ -1,4 +1,9 @@
-﻿using WebForms.Models;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using WebForms.Models;
 using WebForms.Repositories.Interfaces;
 using WebForms.Services.Interfaces;
 using WebForms.ViewModels;
@@ -100,6 +105,37 @@ namespace WebForms.Services.Implementations
         public async Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken = default)
         {
             return await _userRepository.GetAllAsync(cancellationToken);
+        }
+
+        public async Task<StringContent> PrepareSfAccount(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = await GetUserByIdAsync(userId, cancellationToken);
+
+            var accountData = new
+            {
+                Name = user.Username,
+                Email__c = user.Email,
+            };
+
+            return new StringContent(JsonConvert.SerializeObject(accountData), Encoding.UTF8, "application/json");
+        }
+
+        public async Task<StringContent> PrepareSfAccountContact(string result, StringContent accountContent)
+        {
+            var jsonResult = JObject.Parse(result);
+            string accountId = jsonResult["id"].ToString();
+
+            string jsonString = await accountContent.ReadAsStringAsync();
+            var jsonAccount = JObject.Parse(jsonString);
+
+            var contactData = new
+            {
+                LastName = jsonAccount["Name"].ToString(),
+                Email = jsonAccount["Email__c"].ToString(),
+                AccountId = accountId
+            };
+
+            return new StringContent(JsonConvert.SerializeObject(contactData), Encoding.UTF8, "application/json");
         }
     }
 }

@@ -24,5 +24,9 @@ namespace WebForms.Services.Interfaces
         Task<List<User>> FindSelectedUsers(List<int> selectedUsers, CancellationToken cancellationToken = default);
 
         Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken = default);
+
+        Task<StringContent> PrepareSfAccount(int userId, CancellationToken cancellationToken = default);
+
+        Task<StringContent> PrepareSfAccountContact(string result, StringContent accountContent);
     }
 }

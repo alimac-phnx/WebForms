@@ -117,43 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Enter your search query" xml:space="preserve">
-    <value>Введите запрос для поиска</value>
-  </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Привет</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>Главная</value>
-  </data>
-  <data name="Language" xml:space="preserve">
-    <value>Язык</value>
-  </data>
-  <data name="Log out" xml:space="preserve">
-    <value>Выйти из аккаунта</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>Вход</value>
-  </data>
-  <data name="My forms" xml:space="preserve">
-    <value>Мои формы</value>
-  </data>
-  <data name="My templates" xml:space="preserve">
-    <value>Мои шаблоны</value>
-  </data>
-  <data name="New template" xml:space="preserve">
-    <value>Новый шаблон</value>
-  </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Прайваси</value>
+  <data name="E-mail" xml:space="preserve">
+    <value>E-mail</value>
   </data>
   <data name="Profile" xml:space="preserve">
-    <value>Профиль</value>
+    <value>Profile</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Регистрация</value>
+  <data name="Salesforce me" xml:space="preserve">
+    <value>Salesforce me</value>
   </data>
-  <data name="Title" xml:space="preserve">
-    <value>ВебФормс</value>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
   </data>
 </root>

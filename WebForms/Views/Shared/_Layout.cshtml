@@ -60,13 +60,16 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                         <li>
-                                            <a class="dropdown-item" href="@Url.Action("UserTemplates", "Template")">@Localizer["Templates"]</a>
+                                            <a class="dropdown-item" href="@Url.Action("MyProfile", "Account")">@Localizer["Profile"]</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="@Url.Action("UserForms", "Form")">@Localizer["Forms"]</a>
+                                            <a class="dropdown-item" href="@Url.Action("UserTemplates", "Template")">@Localizer["My templates"]</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="@Url.Action("Create", "Template")"><i class="fas fa-plus"></i> @Localizer["NewTemplate"]</a>
+                                            <a class="dropdown-item" href="@Url.Action("UserForms", "Form")">@Localizer["My forms"]</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("Create", "Template")"><i class="fas fa-plus"></i> @Localizer["New template"]</a>
                                         </li>
                                         <li>
                                             <hr class="dropdown-divider" />
